@@ -8,8 +8,6 @@
 // Celui-ci lance sur le Android une commande de copie du "result.json" dans le répertoire courant cygwin du de lancement
 // sur le PC (fichier expect test.exp)
 // Scilab analyse alors la date de modification. Si elle differe, alors il lance l'affichage de golf.
-// cle pilote {e0cbf06c-cd8b-4647-bb8a-263b43f0f974}\0002
-// 74:f0:7d:c6:50:50
 // 
 
 unix('C:\Users\matthieu\AppData\Local\Android\sdk\platform-tools\adb  forward tcp:22 tcp:2222');
