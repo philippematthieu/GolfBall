@@ -1,0 +1,6 @@
+h2=openserial(4,"9600,n,8,1")
+readserial(h2)
+writeserial(h2,str)
+[queue,status] = serialstatus(h2)
+ascii(readserial(h2))
+closeserial(h2)
