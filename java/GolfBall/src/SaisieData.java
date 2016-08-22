@@ -39,15 +39,15 @@ public class SaisieData extends ApplicationFrame{
 		//Type,  Poids , Loft , Ecoeff, CoeffBackSpin,	CoeffSpinLift, 	Cl1,  	pClubV0, pAlphaClubPath, 	pGamaFacePath,	pShafLeanImp
 		JLabel clubText 					= new JLabel("Club");
 		JLabel poidsText 					= new JLabel("Poids (kg)");
-		JLabel loftText 					= new JLabel("Loft (°)");
+		JLabel loftText 					= new JLabel("Loft (ï¿½)");
 		JLabel ecoeffText 					= new JLabel("E coeff");
 		JLabel backSpinText 				= new JLabel("Coeff BackSpin");
 		JLabel spinLiftText 				= new JLabel("Coeff SpinLift");
 		JLabel cl1Text 						= new JLabel("Cl1");
 		JLabel vClubText 					= new JLabel("Vitesse Club (km/h)");
-		JLabel clubPathText 				= new JLabel("Alpha ClubPath (°)");
-		JLabel gamaPathText 				= new JLabel("Gama FacePath (°)");
-		JLabel shaftLeanText 				= new JLabel("ShafLean Imp (°)");
+		JLabel clubPathText 				= new JLabel("Alpha ClubPath (ï¿½)");
+		JLabel gamaPathText 				= new JLabel("Gama FacePath (ï¿½)");
+		JLabel shaftLeanText 				= new JLabel("ShafLean Imp (ï¿½)");
 
 		listClub 		= new JComboBox<Object>();
 		listClub.addActionListener(new ListClubAction(this,"List"));
@@ -58,7 +58,7 @@ public class SaisieData extends ApplicationFrame{
 		loftField 							= new JTextField(Double.toString(sac[0].getLoft()));
 		loftField.addActionListener(new LoftAction(this,"Loft"));
 
-		ecoeffField 						= new JTextField(String.format(null,Double.toString(sac[0].getEcoeff())));
+		ecoeffField 						= new JTextField(Double.toString(sac[0].getEcoeff()));
 		ecoeffField.addActionListener(new ECoeffAction(this,"ECoeff"));
 
 		coeffBackSpinField 					= new JTextField(Double.toString(sac[0].getCoeffBackSpin()));
@@ -83,10 +83,10 @@ public class SaisieData extends ApplicationFrame{
 		shafLeanImpField.addActionListener(new shafLeanImpAction(this,"ShaftLean"));
 		
 		/**
-		 * Lancement du calcul de la modélisation.
+		 * Lancement du calcul de la modï¿½lisation.
 		 * RunAction(this,"Swing")		
 		 */
-		JButton boutonRun 					= new JButton( new RunAction(this,"Swing")); // Lance le le calcul de la modélisation.
+		JButton boutonRun 					= new JButton( new RunAction(this,"Swing")); // Lance le le calcul de la modï¿½lisation.
 	/**
 	 * creation de la list de choix deroulant des clubs du sac
 	 */

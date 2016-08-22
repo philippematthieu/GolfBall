@@ -1,5 +1,5 @@
 /**
- * @author f009770
+ * @author 
  * @version  1.0
  * @category A
  * @see other
@@ -40,10 +40,10 @@ public class Simu {
 		}
 		else
 		{
-			System.out.println("Les paramètres sont  Club Type, Club Speed, AlphaClubPath,GamaFacePath, ShafLeanImp");
+			System.out.println("Les paramï¿½tres sont  Club Type, Club Speed, AlphaClubPath,GamaFacePath, ShafLeanImp");
 			System.out.println("Club Type =  Dr, B5, H3, F5, F6, F7, F8, F9, PW, AW, SW, LW, Pt");
-			System.out.println("AlphaClubPath est l'angle du chemin de club en degré. (+) signifie un pull, (-) signifie un push");
-			System.out.println("GamaFacePath est l'angle de la tête de club en degré. (+) signifie une tête de club ouverte (Slice), (-) signifie une tête de club fermée (Hook)");
+			System.out.println("AlphaClubPath est l'angle du chemin de club en degrï¿½. (+) signifie un pull, (-) signifie un push");
+			System.out.println("GamaFacePath est l'angle de la tï¿½te de club en degrï¿½. (+) signifie une tï¿½te de club ouverte (Slice), (-) signifie une tï¿½te de club fermï¿½e (Hook)");
 			System.out.println("Exemple Golf.jar Dr 170.6 0.0 0.0 6.0");
 			club = sac[0];
 		}
