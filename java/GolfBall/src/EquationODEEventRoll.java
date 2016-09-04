@@ -1,6 +1,6 @@
 /**
  * 
- * @author f009770
+ * @author 
  *
  */
 public class EquationODEEventRoll  extends EquationODE {

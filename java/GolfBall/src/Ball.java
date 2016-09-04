@@ -2,10 +2,10 @@ import java.util.Vector;
 
 
 /**
- * @author f009770
- *
- * {@literal} Description : Class de definition des caracteristiques de la balle de golf
+ * Calculates the golf ball's flight, with the initial club velocity and others parameters, given by the golf club. The solver Runge Kutta is called to solve the flight's ordinary differential equation.  
+ * @author Matthieu PHILIPPE
  * @param (String pMarque, int pNbAlveoles, int pNbPieces, double pTemperature, GolfClub pGolfClub, double pdt, double pTimeMax, double pdt)
+ * @return Vector &lsaquo;double[]&rsaquo; matriceFlight; initial ball's velocity ; Back Spin; Side Spin; Launch Angle; Impact Angle; Dynamic Loft; Fall point; Total Range
  * 
  */
 public class Ball {
@@ -32,26 +32,27 @@ public class Ball {
 	private EquationODERoll		eqnRoulBalle;
 	private EquationODEEventFlight 	event;
 	private double				alphaClubPath;
-	private double 				impactAngle = 0.0;
+	private double 				verticalLand = 0.0;
 	private double[] 			paramEqn = new double[9];// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
 	private Vector<double[]> 	matriceFlight = new Vector<double[]>(); // la dimension est faite par le .clone() plus loin
 	private	int 				indexChute = 0;
-	private double spinYOrgrpm, spinZOrgrpm;
-
+	private double 				spinYOrgrpm, spinZOrgrpm;
+	private double 				tempsTotal;
+	private double 				maxHeight;
 	// Constructor
-	public Ball(String pMarque, int pNbAlveoles, int pNbPieces, double pTemperature, Club pGolfClub, double pTimeMax, double pdt){
+	public Ball(String pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, double pTimeMax, double pdt){
 		/**
-		 * @author f009770
+		 * @author 
 		 * @param String pMarque, int pNbAlveoles, int pNbPieces, double pTemperature
 		 */
 		marque 			= pMarque;
 		nbAlveoles 		= pNbAlveoles;
 		nbPieces 		= pNbPieces;
-		temperature 	= pTemperature; 					// en °C
+		temperature 	= pGolfClub.getTemperature(); 		// en °C
 		masse 			= 0.04545; 							// en kg
 		rayon			= 0.0215; 							// en m
 		area 			= Math.PI*rayon*rayon;				// air de la section en m^2
-		rhoAir		 	= 1.292*273.15/(pTemperature + 273); // en kg/m^3
+		rhoAir		 	= 1.292*273.15/(temperature + 273); // en kg/m^3
 		rhoGreen	 	= 0.131; 							// en kg/m^3
 		g 				= 9.81; 							// m/s^2
 		timeMax 		= pTimeMax;
@@ -114,6 +115,9 @@ public class Ball {
 	}	
 	public double getTemperature() {
 		return temperature;
+	}
+	public void setTemperature(double temp) {
+		temperature = temp;
 	}	
 	public double getMasse() {
 		return masse;
@@ -140,7 +144,7 @@ public class Ball {
 		return launchAngle;
 	}	
 	public double getImpactAngle() {
-		return impactAngle;
+		return verticalLand;
 	}	
 	public double[] getV0Initms() {
 		return v0Initms;
@@ -224,28 +228,40 @@ public class Ball {
 		paramEqn[2] = wz;
 		return;
 	}
-	// gestion du temps
+	/** gestion du temps maximum pour le solver
+	 * @return timeMax : temps maximum du solver
+	 */
 	public double getTimeMax() {
 		return timeMax;
 	}	
+	/** gestion du pas de temps pour le solver
+	 * @return dt : pas de temps du solver
+	 */
 	public double getdt() {
 		return dt;
 	}	
 	public double getIndexChute() {
 		return indexChute-1;
+	}		
+	public double getTempsTotal() {
+		return tempsTotal;
 	}	
 	public Vector<double[]> getMatriceFlight()
 	{
 		return matriceFlight;
 	}
+	public double getMaxHeight()
+	{
+		return maxHeight;
+	}
 	/**
 	 * Debut de runSimu()
-	 * author 
+	 * author Matthieu PHILIPPE
 	 **/
 	public void runSimu() {
 		Vector<double[]> matrice = new Vector<double[]>(); // la dimension est faite par le .clone() plus loin
 
-		double vi, thetaRebond, vixprime, vrxprime, vizprime, vrzprime, eBall, muFrictionCritic, wr, vr, vrx, vry, vrz; 
+		double vi, thetaRebond, vixprime, vrxprime, vizprime, vrzprime, eBall, muFrictionCritic, wr, vr, vrx, vry, vrz, impactAngle; 
 		final  double muFriction = 0.40;
 
 		for (int i = 0;i < 3;i++) {
@@ -306,8 +322,10 @@ public class Ball {
 			solveFlight.getEquationODE().setParamEq(wr,1);	// wy et le this.SpinY
 			solveFlight.getEquationODE().setParamEq(0,2);	// wz et le this.SpinZ
 			// enregistrement du point de chutte
-			if (i == 0) 
+			if (i == 0) {
 				indexChute = matrice.size();
+				verticalLand = impactAngle;
+			}
 		} // fin de la boucle for 3 rebonds
 
 		/**
@@ -334,7 +352,9 @@ public class Ball {
 		 * fin du roullage
 		 */
 		for (double[] j : matrice) {
-			// mise à jour des donnees courrantes et rotation vers nouveau referentiel prenant en compte la direction initiale du club
+			/**
+			 * mise à jour des donnees courrantes et rotation vers nouveau referentiel prenant en compte la direction initiale du club
+			 */
 			this.setX( j[0]  * Math.cos(alphaClubPath) + j[2] * Math.sin(alphaClubPath));
 			this.setVx(j[1]  * Math.cos(alphaClubPath) + j[3] * Math.sin(alphaClubPath));
 			this.setY(-j[0]  * Math.sin(alphaClubPath) + j[2] * Math.cos(alphaClubPath));
@@ -342,7 +362,9 @@ public class Ball {
 			this.setZ( j[4]);
 			this.setVz(j[5]);				
 			matriceFlight.add(this.getVCurrentms().clone());
+			maxHeight = Math.max(maxHeight, j[4]); // sauvegarde de la hauteur max atteinte
 		}
+		tempsTotal = solveRoll.getCurrentS() + solveFlight.getCurrentS();
 		return;
 	}
 	/**

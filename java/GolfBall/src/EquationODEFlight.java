@@ -1,6 +1,6 @@
 /**
  * 
- * @author f009770
+ * @author 
  *
  */
 public class EquationODEFlight extends EquationODE {
@@ -12,7 +12,7 @@ public class EquationODEFlight extends EquationODE {
 
 	public double[] getEvaluation(double s, double q[] ){
 		/**
-		 * @author f009770
+		 * @author 
 		 * @param
 		 */
 		double normeVitesseIn;	// en m/s

@@ -14,7 +14,7 @@ public class SolverODE
 
 	// Constructor
 	/**
-	 * @author f009770
+	 * @author 
 	 * {@literal} Description : constructeur du solver Runge Kutta
 	 * @param (String pMarque, int pNbAlveoles, int pNbPieces, double pTemperature, GolfClub pGolfClub, double pdt, double pTimeMax, double pdt)
 	 */
@@ -109,7 +109,7 @@ public class SolverODE
 
 
 	/**
-	 * ZeroCrossing Solver unsing Rung Kutta.
+	 * ZeroCrossing Solver using Runge Kutta.
 	 * @param event
 	 * @param precision
 	 */
@@ -131,7 +131,7 @@ public class SolverODE
 		// si les valeurs de retour qRes sont comprises entre (-precision) < qRes < 0 on arrete car on a traverse le zero a la precision.
 		iter 	= true;
 		zeroCrossing = false;
-		while (iter){
+		while (iter){ // iteration sur un pas plus petit / 2
 			q = (double[]) qOrg.clone(); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
 			sCurrent = sCurrentOrg; 				// on remet la valeur avant le pas
 			rungeKutta4();
@@ -144,6 +144,6 @@ public class SolverODE
 		ds = dsOrg;									// on reprend le pas de temps intiale
 		zeroCrossing = true;
 		for (double i : qRes) 
-			zeroCrossing = (((-precision <= i) && (i <= 0)) && zeroCrossing); // si l'un des q n'est pas dans le range pas de zero crossing
+			zeroCrossing = (((-precision <= i) && (i <= 0)) && zeroCrossing); // si l'un des q n'est pas dans le range entre (-precision) < qRes < 0, pas de zero crossing
 	} 
 }

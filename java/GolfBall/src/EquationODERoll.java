@@ -1,6 +1,6 @@
 /**
  * 
- * @author f009770
+ * @author 
  *
  */
 public class EquationODERoll  extends EquationODE {
@@ -16,7 +16,7 @@ public class EquationODERoll  extends EquationODE {
  */
 	public double[] getEvaluation(double s, double q[] ){
 		/**
-		 * @author f009770
+		 * @author 
 		 * @param
 		 */
 		double vx 			= q[1];		// = dxdt en m/s

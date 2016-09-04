@@ -1,6 +1,6 @@
 /**
- * @author f009770
- * {@literal} Description : Class de defnintion d'un Club
+ * @author 
+ * {@literal} Description : Class de definition d'un Club
  */
 public class Club {
 	private String Type;
@@ -17,10 +17,12 @@ public class Club {
 	private double clubV0ms;			// vitesse en km/h dde la tete de club
 	private double dynamiqueLoft;			// loft d'impact corrige avec le Shaft Lean, en radian
 	private double miss;				// centre du club loupe en cm
+	private double temperature;	 	// Temperature de l'aire en °C
+
 	// Constructor 
-	public Club(String pType, double pPoids, double pLoft, double pEcoeff, double pCoeffBackSpin, double pCoeffSpinLift, double pCl1, double pClubV0, double pAlphaClubPath, double pGamaFacePath, double pShaftLeanImp){
+	public Club(String pType, double pPoids, double pTemperature, double pLoft, double pEcoeff, double pCoeffBackSpin, double pCoeffSpinLift, double pCl1, double pClubV0, double pAlphaClubPath, double pGamaFacePath, double pShaftLeanImp){
 		/**
-		 * @author f009770
+		 * @author 
 		 * @param String pType, double pPoids, double pLoft, double pEcoeff, double pCoeffBackSpin, double pCoeffSpinLift, double pCm)
 		 * 
 		 */
@@ -38,11 +40,18 @@ public class Club {
 		clubV0kmh		= pClubV0;
 		clubV0ms		= clubV0kmh * 10 / 36; 				// passag en m/s
 		dynamiqueLoft	= (Loft + shaftLeanImp)*Math.PI/180; // passage en radian du loft dynamique
+		temperature 	= pTemperature;
 		
 	} // fin constructor public GolfClub()
 	
 	public String getType() {
 		return Type;
+	}	
+	public double getTemperature() {
+		return temperature;
+	}
+	public void setTemperature(double temp) {
+		temperature = temp;
 	}
 	public double getPoids() {
 		return Poids;
