@@ -68,7 +68,7 @@ public class SolverODE
 		double dqnew[] = new double[numEqns];
 
 		// dZ1 = v(tn, zn)*dt
-		dq1 = eqn.getEvaluation(sCurrent		, q);
+		dq1 = eqn.getEvaluation(getCurrentS()		, q);
 		for(j=0; j < numEqns; ++j) {
 			dq1[j] = dq1[j]*ds;
 		}
@@ -77,7 +77,7 @@ public class SolverODE
 		for(j=0; j < numEqns; ++j) {
 			dqnew[j] = q[j] + 0.5*dq1[j];
 		}
-		dq2 = eqn.getEvaluation(sCurrent + 0.5 * ds, dqnew);
+		dq2 = eqn.getEvaluation(getCurrentS() + 0.5 * ds, dqnew);
 		for(j=0; j < numEqns; ++j) {
 			dq2[j] = dq2[j]*ds;
 		}
@@ -86,7 +86,7 @@ public class SolverODE
 		for(j=0; j < numEqns; ++j) {
 			dqnew[j] = q[j] + 0.5*dq2[j];
 		}		
-		dq3 = eqn.getEvaluation(sCurrent + 0.5 * ds, dqnew);
+		dq3 = eqn.getEvaluation(getCurrentS() + 0.5 * ds, dqnew);
 		for(j=0; j < numEqns; ++j) {
 			dq3[j] = dq3[j]*ds;
 		}
@@ -95,7 +95,7 @@ public class SolverODE
 		for(j=0; j < numEqns; ++j) {
 			dqnew[j] = q[j] + dq3[j];
 		}	
-		dq4 = eqn.getEvaluation(sCurrent + ds	, dqnew);
+		dq4 = eqn.getEvaluation(getCurrentS() + ds	, dqnew);
 		for(j=0; j < numEqns; ++j) {
 			dq4[j] = dq4[j]*ds;
 		}	
@@ -103,7 +103,7 @@ public class SolverODE
 		for(j=0; j < numEqns; ++j) {
 			q[j] = q[j] + (dq1[j] + 2.0*dq2[j] + 2.0*dq3[j] + dq4[j])/6.0;
 		}
-		sCurrent = sCurrent + ds; 			// evolution du temps au step suivant
+		setCurrentS(getCurrentS() + ds); 			// evolution du temps au step suivant
 		return;
 	}
 
@@ -121,7 +121,7 @@ public class SolverODE
 		boolean iter	= true;
 
 		// initialisation à la valeur avant calcul
-		sCurrentOrg = sCurrent;
+		sCurrentOrg = getCurrentS();
 		dsOrg 		= ds;
 		qOrg 		= (double[]) q.clone();
 
@@ -133,9 +133,9 @@ public class SolverODE
 		zeroCrossing = false;
 		while (iter){ // iteration sur un pas plus petit / 2
 			q = (double[]) qOrg.clone(); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
-			sCurrent = sCurrentOrg; 				// on remet la valeur avant le pas
+			setCurrentS(sCurrentOrg); 				// on remet la valeur avant le pas
 			rungeKutta4();
-			qRes 	= event.getEvaluation(sCurrent, q);
+			qRes 	= event.getEvaluation(getCurrentS(), q);
 			iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
 			for (double i : qRes) 
 				iter = ((i < -precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing
