@@ -127,7 +127,6 @@ public class Simu {
 	 */
 	public static void main(String[] args) {
 		Club[] sac = new Club[13];
-		Club club;
 		Locale.setDefault(new Locale("en", "US")); // force le passage a un "." comme separateur de decimale au lieu de ","
 		//				   Type,  Poids , temp, Loft , Ecoeff, CoeffBackSpin,	CoeffSpinLift, 	Cl1,  	pClubV0, pAlphaClubPath, 	pGamaFacePath,	pShafLeanImp
 		sac[0]  = new Club("Dr",  0.300 , 20.0, 11   , 0.738,  200.00 , 		1500.0 , 		0.64, 	170.6, 	 0.0,		 		0.0,			 6.0);
@@ -143,25 +142,6 @@ public class Simu {
 		sac[10] = new Club("SW",  0.200 , 20.0, 54   , 0.71 ,  520.00 , 		308.0 , 		0.15,	104.6, 	 0.0,	 			0.0,			-15.0);
 		sac[11] = new Club("LW",  0.200 , 20.0, 60   , 0.40 ,  500.00 , 		308.0 , 		0.15, 	100.0, 	 0.0,	 			-3.0,			-12.0);
 		sac[12] = new Club("Pt",  0.300 , 20.0, 03   , 0.68 ,  550.24 , 		308.0 , 		0.00, 	10.00, 	 0.0,	 			0.0,			 1.0);
-
-		if (args.length == 6) {
-			for (Club j : sac)
-				if (j.getType().equals(args[0])) {
-					club = new Club(args[0],  j.getPoids(), Double.parseDouble(args[5]),
-							j.getLoft() , j.getEcoeff() , j.getCoeffBackSpin() , j.getCoeffSpinLift() , j.getCl1(), 
-							Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]), Double.parseDouble(args[4]));
-					break;
-				}
-		}
-		else
-		{
-			System.out.println("Les paramètres sont  Club Type, Club Speed, AlphaClubPath,GamaFacePath, ShafLeanImp, Temperature");
-			System.out.println("Club Type =  Dr, B5, H3, F5, F6, F7, F8, F9, PW, AW, SW, LW, Pt");
-			System.out.println("AlphaClubPath est l'angle du chemin de club en degré. (+) signifie un pull, (-) signifie un push");
-			System.out.println("GamaFacePath est l'angle de la tête de club en degré. (+) signifie une tête de club ouverte (Slice), (-) signifie une tête de club fermée (Hook)");
-			System.out.println("Exemple Golf.jar Dr 170.6 0.0 0.0 6.0 20.0");
-			club = sac[0];
-		}
 		/**
 		 * Lancement de la fenetre de saisie de parametres
 		 */
