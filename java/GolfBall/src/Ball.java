@@ -291,17 +291,17 @@ public class Ball {
 			else {
 				eBall 	= 0.120;
 			}
-			muFrictionCritic = 2.0 * (vixprime + rayon * this.getSpinY()) / (7.0*(1+eBall) * Math.abs(vizprime));
+			muFrictionCritic = 2.0 * (vixprime + getRayon() * this.getSpinY()) / (7.0*(1+eBall) * Math.abs(vizprime));
 
 			if (muFriction < muFrictionCritic) {
 				vrxprime 	= vixprime - muFriction * Math.abs(vizprime) *(1.0 + eBall);
 				vrzprime 	= eBall * Math.abs(vizprime);
-				wr 			= this.getSpinY() - (5.0 * muFriction * 2.0 * rayon) * Math.abs(vizprime) * (1.0 + eBall); // nouveau spinY
+				wr 			= this.getSpinY() - (5.0 * muFriction * 2.0 * getRayon()) * Math.abs(vizprime) * (1.0 + eBall); // nouveau spinY
 			}
 			else {
-				vrxprime 	= 5.0/7.0*vixprime - 2.0/7.0*rayon*this.getSpinY();
+				vrxprime 	= 5.0/7.0*vixprime - 2.0/7.0*getRayon()*this.getSpinY();
 				vrzprime 	= eBall * Math.abs(vizprime);
-				wr 			= -vrxprime / rayon; 											// nouveau spinY
+				wr 			= -vrxprime / getRayon(); 											// nouveau spinY
 			}
 			vr 		= vrxprime * Math.cos(thetaRebond) - vrzprime * Math.sin(thetaRebond); 	// nouvelle norme de la vitesse de la balle
 			vrz 	= vrxprime * Math.sin(thetaRebond) + vrzprime * Math.cos(thetaRebond); 	// Hauteur
