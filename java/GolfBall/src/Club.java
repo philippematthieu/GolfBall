@@ -14,8 +14,6 @@ public class Club {
 	private double gamaFacePath;		// angle de la tete de club a l'impact
 	private double shaftLeanImp;			// angle du shaft a l'impact en degre
 	private double clubV0kmh;			// vitesse en km/h dde la tete de club
-	private double clubV0ms;			// vitesse en km/h dde la tete de club
-	private double dynamiqueLoft;			// loft d'impact corrige avec le Shaft Lean, en radian
 	private double miss;				// centre du club loupe en cm
 	private double temperature;	 	// Temperature de l'aire en °C
 
@@ -38,8 +36,6 @@ public class Club {
 		gamaFacePath 	= pGamaFacePath*Math.PI/180;  // en radian
 		shaftLeanImp 	= pShaftLeanImp;
 		clubV0kmh		= pClubV0;
-		clubV0ms		= clubV0kmh * 10 / 36; 				// passag en m/s
-		dynamiqueLoft	= (Loft + shaftLeanImp)*Math.PI/180; // passage en radian du loft dynamique
 		temperature 	= pTemperature;
 		
 	} // fin constructor public GolfClub()
@@ -88,17 +84,15 @@ public class Club {
 	}
 	public void setLoftDegre(double pLoft) {
 		Loft = pLoft;
-		dynamiqueLoft = (pLoft + shaftLeanImp)*Math.PI/180;
 	}
 	public double getDynamiqueLoft() {
-		return dynamiqueLoft;
+		return (getLoft() + getShaftLeanImp())*Math.PI/180;
 	}
 	public double getDynamiqueLoftDegre() {
-		return dynamiqueLoft*180/Math.PI;
+		return getDynamiqueLoft()*180/Math.PI;
 	}
 	public void setShafLeanImpDegre(double pShafLeanImp) {
 		shaftLeanImp = pShafLeanImp;
-		dynamiqueLoft = (Loft + shaftLeanImp)*Math.PI/180;
 	}
 	public double getShaftLeanImp() {
 		return shaftLeanImp;
@@ -108,10 +102,12 @@ public class Club {
 	}
 	public void setClubV0Kmh(double vitesse) {
 		clubV0kmh	= vitesse;
-		clubV0ms	= clubV0kmh * 10 / 36;
 	}
+	public double getClubV0kmh() {
+		return clubV0kmh;
+	}	
 	public double getClubV0ms() {
-		return clubV0ms;
+		return getClubV0kmh() * 10 / 36;
 	}
 	public double getMiss() {
 		return miss;
@@ -120,7 +116,7 @@ public class Club {
 		return gamaFacePath;
 	}
 	public void setGamaFacePathDegre(double pGamaFacePath) {
-		gamaFacePath = pGamaFacePath*Math.PI/180;
+		gamaFacePath = getGamaFacePath()*Math.PI/180;
 	}
 	public double getAlphaClubPath() {
 		return alphaClubPath;
