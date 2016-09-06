@@ -123,7 +123,7 @@ public class SolverODE
 		// initialisation à la valeur avant calcul
 		sCurrentOrg = getCurrentS();
 		dsOrg 		= ds;
-		qOrg 		= (double[]) q.clone();
+		qOrg 		= (double[]) getAllQ().clone();
 
 		rungeKutta4();
 		// si les valeurs de qRes sont positives, on renvoie le q de rungeKutta en sortant
@@ -132,10 +132,10 @@ public class SolverODE
 		iter 	= true;
 		zeroCrossing = false;
 		while (iter){ // iteration sur un pas plus petit / 2
-			q = (double[]) qOrg.clone(); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
+			setAllQ((double[]) qOrg.clone()); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
 			setCurrentS(sCurrentOrg); 				// on remet la valeur avant le pas
 			rungeKutta4();
-			qRes 	= event.getEvaluation(getCurrentS(), q);
+			qRes 	= event.getEvaluation(getCurrentS(), getAllQ());
 			iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
 			for (double i : qRes) 
 				iter = ((i < -precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing
