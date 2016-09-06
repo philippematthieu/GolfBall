@@ -18,12 +18,11 @@ public class EquationODEEventRoll  extends EquationODE {
 		double qRes[] 	= new double[q.length];
 		
 		qRes[0] = 0.0;
-		qRes[1] = q[1] + 0.01; // je cherche si VX passe sous 0.01ms;
+		qRes[1] = q[1]; // je cherche si VX passe sous 0.01ms;
 		qRes[2] = 0.0;
 		qRes[3] = 0.0;
 		qRes[4] = 0.0;
 		qRes[5] = 0.0;
-		
 		return qRes;
 	} // fin  getEvaluation()
 }

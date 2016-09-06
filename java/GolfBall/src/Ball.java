@@ -31,6 +31,7 @@ public class Ball {
 	private SolverODE			solveRoll;
 	private EquationODERoll		eqnRoulBalle;
 	private EquationODEEventFlight 	event;
+	private EquationODEEventRoll 	eventRoll;
 	private double				alphaClubPath;
 	private double 				verticalLand = 0.0;
 	private double[] 			paramEqn = new double[9];// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
@@ -98,6 +99,7 @@ public class Ball {
 
 		// declaration des instances de roullage de la balle
 		eqnRoulBalle= new EquationODERoll(paramEqn);
+		eventRoll	= new EquationODEEventRoll(paramEqn);
 		solveRoll 	= new SolverODE(eqnRoulBalle, 0.0, this.getdt(), v0Initms);
 	}
 	// methodes pour constantes et variables du systeme
@@ -343,11 +345,12 @@ public class Ball {
 		/**
 		 * Calcul de Runge Kutta
 		 */
-		while ((solveRoll.getCurrentS() < this.getTimeMax()) && (solveRoll.getQ(1) > 0.01)) {
-			solveRoll.rungeKutta4();
+		while ( (solveRoll.getCurrentS() < this.getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
+			solveRoll.zeroCrossing(eventRoll, 1e-2); // si pas de zero crossing une iteration, sinon, event est true
 			// mise à jour des donnees courrantes
 			matrice.add(solveRoll.getAllQ().clone());
 		}
+		solveFlight.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
 		/**
 		 * fin du roullage
 		 */
