@@ -1,6 +1,7 @@
 import java.util.Locale;
 
 /**
+ * 
  * Simulates a flight of a golf ball, shot with a golf club.</br></br>
  * <B>Bibliographie :</B>
  * <OL>
