@@ -155,7 +155,7 @@ int main() {
 	sac[11] = Club("LW",  0.200 , 20.0, 60   , 0.40 ,  500.00 , 		308.0 , 		0.15, 	100.0, 	 0.0,	 			-3.0,			-12.0);
 	sac[12] = Club("Pt",  0.300 , 20.0, 03   , 0.68 ,  550.24 , 		308.0 , 		0.00, 	10.00, 	 0.0,	 			0.0,			 1.0);
 
-	theBall = Ball::Ball("Decathlon", 320.0, 3, sac[0], 18.0, 0.01);
+	theBall = Ball("Decathlon", 320.0, 3, sac[0], 18.0, 0.01);
 
 	cout << "Type Club: "		 <<sac[1].getType() << endl;
 	cout << "Loft: " 	 		 << sac[1].getLoft() << endl;

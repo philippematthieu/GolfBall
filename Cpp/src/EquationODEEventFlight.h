@@ -14,7 +14,7 @@ class EquationODEEventFlight  : public EquationODE {
 public:
 	EquationODEEventFlight();
 	EquationODEEventFlight(double* pParametres);
-	EquationODEEventFlight::~EquationODEEventFlight();
+	~EquationODEEventFlight();
 	virtual double* getEvaluation(double s, double* q );
 
 private :

@@ -16,17 +16,18 @@ EquationODEEventFlight::EquationODEEventFlight(){
 
 EquationODEEventFlight::EquationODEEventFlight(double* pParametres){
 	//EquationODE::EquationODE();
+	double* qRes = new double(6);
+
 	cout << "debut EquationODEEventFlight: "<< endl;
 	parametres = pParametres;
 	cout << "EquationODEEventFlight fin: "<< endl;
 }
 
-EquationODEEventFlight::~EquationODEEventFlight(){
+EquationODEEventFlight::~EquationODEEventFlight() {
 	delete qRes;
 }
 
 double* EquationODEEventFlight::getEvaluation(double s, double* q ) {
-	double* qRes = new double(6);
 
 	qRes[0] = 0.0;
 	qRes[1] = 0.0;

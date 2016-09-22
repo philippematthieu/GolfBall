@@ -34,8 +34,8 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	double* matriceFlight = new double; // la dimension est faite par le .clone() plus loin
 	area = M_PI*rayon*rayon;
 	indexChute = 0;
-//	EquationODEFlight eqnVolBalle;
-//	EquationODEEventFlight event;
+	EquationODEFlight eqnVolBalle;
+	EquationODEEventFlight event;
 
 	double v0Ballbfnms =  pGolfClub.getClubV0ms() * cos(pGolfClub.getDynamiqueLoftRadian())*(1.0 + pGolfClub.getEcoeff())/(1+masse/pGolfClub.getPoids()) ;// Vitesse longitudinale dans le referentiel de decollage apres impact (ref: The physics of golf: The optimum loft of a driverA. Raymond Penner)
 	double v0Ballbfpms = -pGolfClub.getClubV0ms() * sin(pGolfClub.getDynamiqueLoftRadian())/(1.0 + masse/pGolfClub.getPoids() + 2.5);     // Vitesse perpendiculaire dans le referentiel de decollage apres impact
@@ -79,7 +79,7 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	cout << "paramEqn Size: " << sizeof(*paramEqn)+1 << endl;
 
 	// declaration des instances pour le vol de la balle
-	EquationODEFlight eqnVolBalle	= EquationODEFlight::EquationODEFlight(paramEqn);
+	eqnVolBalle	= EquationODEFlight(paramEqn);
 
 	cout << "getParam: " << eqnVolBalle.getParamEq(1) << endl;
 	eqnVolBalle.setParamEq(100.1,1) ;
@@ -88,8 +88,7 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	cout << "SizeParam: " << eqnVolBalle.getSizeParamEq() << endl;
 	cout << "EquationODEEventFlight::EquationODEEventFlight(paramEqn)"<< endl;
 
-//	EquationODEEventFlight event = EquationODEEventFlight::EquationODEEventFlight(paramEqn);
-
+	event = EquationODEEventFlight(paramEqn);
 	cout << "Fin EquationODEEventFlight::EquationODEEventFlight(paramEqn)"<< endl;
 
 //	solveFlight = new SolverODE(eqnVolBalle, 0.0, this.getdt(), v0Initms);
