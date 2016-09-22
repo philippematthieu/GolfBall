@@ -33,7 +33,7 @@ public:
 	void setCl1(double pCl1);
 	double getLoft();
 	void setLoftDegre(double pLoft);
-	double getDynamiqueLoft();
+	double getDynamiqueLoftRadian();
 	double getDynamiqueLoftDegre();
 	void setShafLeanImpDegre(double pShafLeanImp);
 	double getShaftLeanImp();
@@ -42,7 +42,7 @@ public:
 	double getClubV0kmh();
 	double getClubV0ms();
 	double getMiss();
-	double getGamaFacePath();
+	double getGamaFacePathRadian();
 	void setGamaFacePathDegre(double pGamaFacePath);
 	double getAlphaClubPath();
 	double getAlphaClubPathRadian();

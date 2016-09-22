@@ -127,18 +127,21 @@
  *
  */
 #include <iostream>
+#include <algorithm> // for copy
 #include <string>
+#include <iterator> // for ostream_iterator
+#include <vector>
 
 #include "Club.h"
+#include "Ball.h"
 
 using namespace std;
 
-
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
-
 	Club sac[13];
-	sac[0] = Club("Dr",  0.300 , 20.0, 11.0, 0.738,  200.00 , 1500.0 , 0.64, 170.6, 0.0, 0.0, 6.0);
+	Ball theBall;
+
+	sac[0]  = Club("Dr",  0.300 , 20.0, 11.0, 0.738,  200.00 , 1500.0 , 0.64, 170.6, 0.0, 0.0, 6.0);
 	sac[1]  = Club("B5",  0.280 , 20.0, 18   , 0.78 ,  281.64 , 		500.0 , 		0.65, 	151.6, 	 5.0,	 			-5.0,			-3.0);
 	sac[2]  = Club("H3",  0.250 , 20.0, 18   , 0.80 ,  322.00 , 		500.0 , 		0.54, 	136.8, 	 0.0,	 			0.0,			-2.5);
 	sac[3]  = Club("F5",  0.200 , 20.0, 23   , 0.85 ,  335.00 , 		420.0 , 		0.54, 	127.1, 	 0.0,	 			0.0,			-5.0);
@@ -152,5 +155,14 @@ int main() {
 	sac[11] = Club("LW",  0.200 , 20.0, 60   , 0.40 ,  500.00 , 		308.0 , 		0.15, 	100.0, 	 0.0,	 			-3.0,			-12.0);
 	sac[12] = Club("Pt",  0.300 , 20.0, 03   , 0.68 ,  550.24 , 		308.0 , 		0.00, 	10.00, 	 0.0,	 			0.0,			 1.0);
 
+	theBall = Ball::Ball("Decathlon", 320.0, 3, sac[0], 18.0, 0.01);
+
+	cout << "Type Club: "		 <<sac[1].getType() << endl;
+	cout << "Loft: " 	 		 << sac[1].getLoft() << endl;
+	cout << "getV0Initms Dim: "  << (theBall.getV0Initms()).size() << endl;
+	for(int i = 0; i < (theBall.getV0Initms()).size();  ++i) {
+		cout << "getV0Initms: "  << (theBall.getV0Initms())[i]   << endl;
+		cout << "getVCurrentms: "<< (theBall.getVCurrentms())[i] << endl;
+	}
 	return 0;
 }

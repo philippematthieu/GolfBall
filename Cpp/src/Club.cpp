@@ -66,11 +66,11 @@ double Club::getLoft() {
 void Club::setLoftDegre(double pLoft) {
 	Loft = pLoft;
 }
-double Club::getDynamiqueLoft() {
+double Club::getDynamiqueLoftRadian() {
 	return (getLoft() + getShaftLeanImp())*M_PI/180.0;
 }
 double Club::getDynamiqueLoftDegre() {
-	return getDynamiqueLoft()*180.0/M_PI;
+	return getDynamiqueLoftRadian()*180.0/M_PI;
 }
 void Club::setShafLeanImpDegre(double pShafLeanImp) {
 	shaftLeanImp = pShafLeanImp;
@@ -93,11 +93,11 @@ double Club::getClubV0ms() {
 double Club::getMiss() {
 	return miss;
 }
-double Club::getGamaFacePath() {
+double Club::getGamaFacePathRadian() {
 	return gamaFacePath;
 }
 void Club::setGamaFacePathDegre(double pGamaFacePath) {
-	gamaFacePath = getGamaFacePath()*M_PI/180.0;
+	gamaFacePath = pGamaFacePath*M_PI/180.0;
 }
 double Club::getAlphaClubPath() {
 	return alphaClubPath;

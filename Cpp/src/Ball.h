@@ -2,7 +2,7 @@
  * Ball.h
  *
  *  Created on: 20 sept. 2016
- *      Author: f009770
+ *      Author:
  */
 
 //#ifndef M_PI
@@ -11,7 +11,11 @@
 
 #ifndef BALL_H_
 #define BALL_H_
+#include <vector>
 #include "Club.h"
+#include "EquationODEFlight.h"
+
+using namespace std;
 class Ball {
 public:
 	Ball();
@@ -32,8 +36,8 @@ public:
 	double getV0BallInitms();
 	double getLaunchAngle();
 	double getImpactAngle();
-	double* getV0Initms();
-	double* getVCurrentms();
+	std::vector<double>  getV0Initms();
+	std::vector<double>  getVCurrentms();
 	void setVCurrentms(double valeur ,int index );
 	void setVx(double vx);
 	double getVx();
@@ -77,18 +81,18 @@ private :
 	double				g; 					// acceleration terrestre en m/s2
 	double				rhoGreen;			// densite de green
 	double				launchAngle;		// angle de decollage de la balle en radian
-	double*				v0Initms; // {x, vx, y, vy, z, vy } = q init
-	double*				v0Currentms; // {x, vx, y, vy, z, vy } = q courrant
+	std::vector<double> v0Initms; 			// {x, vx, y, vy, z, vy } = q init
+	std::vector<double> v0Currentms; 		// {x, vx, y, vy, z, vy } = q courrant
 	double				v0BallInitms;		// Vitesse initiale de la balle
-	int					numEqns;	// nombre d'equations
-	double				timeMax;				// temps max de l'ODE
+	int					numEqns;			// nombre d'equations
+	double				timeMax;			// temps max de l'ODE
 	double				dt;					// pas de temps
-	SolverODE			solveFlight;
 	EquationODEFlight	eqnVolBalle;
-	SolverODE			solveRoll;
-	EquationODERoll		eqnRoulBalle;
-	EquationODEEventFlight 	event;
-	EquationODEEventRoll 	eventRoll;
+//	SolverODE			solveFlight;
+//	SolverODE			solveRoll;
+//	EquationODERoll		eqnRoulBalle;
+//	EquationODEEventFlight 	event;
+//	EquationODEEventRoll 	eventRoll;
 	double				alphaClubPath;
 	double 				verticalLand;
 	double* 			paramEqn;// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
