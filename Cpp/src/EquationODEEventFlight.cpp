@@ -12,18 +12,19 @@ using namespace std;
 
 EquationODEEventFlight::EquationODEEventFlight(){
 	cout << "EquationODEEventFlight2.3: "<< endl;
+
 }
 
 EquationODEEventFlight::EquationODEEventFlight(double* pParametres){
 	//EquationODE::EquationODE();
-	double* qRes = new double(6);
+	qRes = new double[6];
 
 	cout << "debut EquationODEEventFlight: "<< endl;
-	parametres = pParametres;
 	cout << "EquationODEEventFlight fin: "<< endl;
 }
 
 EquationODEEventFlight::~EquationODEEventFlight() {
+	cout << "~EquationODEEventFlight fin: "<< endl;
 	delete qRes;
 }
 
@@ -37,4 +38,5 @@ double* EquationODEEventFlight::getEvaluation(double s, double* q ) {
 	qRes[5] = 0.0;
 	return qRes;
 }
+
 

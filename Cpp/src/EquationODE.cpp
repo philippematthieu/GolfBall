@@ -15,7 +15,7 @@ EquationODE::EquationODE(){
 
 EquationODE::EquationODE(double* pParametres){
 	cout << "EquationODE: "<< endl;
-	parametres = pParametres;
+	//parametres = pParametres;
 	cout << "EquationODE: fin"<< endl;
 
 }

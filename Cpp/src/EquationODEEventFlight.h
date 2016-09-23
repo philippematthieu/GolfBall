@@ -15,10 +15,11 @@ public:
 	EquationODEEventFlight();
 	EquationODEEventFlight(double* pParametres);
 	~EquationODEEventFlight();
-	virtual double* getEvaluation(double s, double* q );
+	double* getEvaluation(double s, double* q );
 
-private :
+private :	
 	double* qRes;
 };
 
 #endif /* EQUATIONODEEVENTFLIGHT_H_ */
+

@@ -14,6 +14,7 @@
 #include <vector>
 #include "Club.h"
 #include "EquationODEFlight.h"
+#include "EquationODEEventFlight.h"
 
 using namespace std;
 class Ball {
@@ -91,7 +92,7 @@ private :
 //	SolverODE			solveFlight;
 //	SolverODE			solveRoll;
 //	EquationODERoll		eqnRoulBalle;
-//	EquationODEEventFlight 	event;
+	EquationODEEventFlight 	event;
 //	EquationODEEventRoll 	eventRoll;
 	double				alphaClubPath;
 	double 				verticalLand;

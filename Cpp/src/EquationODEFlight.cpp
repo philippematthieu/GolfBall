@@ -11,7 +11,6 @@ EquationODEFlight::EquationODEFlight(){
 }
 
 EquationODEFlight::EquationODEFlight(double* pParametres){
-	//EquationODE::EquationODE();
 	parametres = pParametres;
 }
 
