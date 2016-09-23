@@ -30,7 +30,7 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 {
 	numEqns = 6;
 	verticalLand = 0.0;
-	double* paramEqn = new double[9];// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
+	double paramEqn[9];// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
 	double* matriceFlight = new double; // la dimension est faite par le .clone() plus loin
 	area = M_PI*rayon*rayon;
 	indexChute = 0;
