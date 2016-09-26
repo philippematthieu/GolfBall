@@ -159,7 +159,6 @@ int main() {
 	cout << "Type Club: "		 <<sac[1].getType() << endl;
 	cout << "Loft: " 	 		 << sac[1].getLoft() << endl;
 	cout << "getV0Initms Dim: "  << (theBall.getV0Initms()).size() << endl;
-	cout << (theBall.getV0Initms()).size()<< endl;
 	for(int i = 0; i < (theBall.getV0Initms()).size();  ++i) {
 		cout << "getV0Initms: "  << (theBall.getV0Initms())[i]   << endl;
 		cout << "getVCurrentms: "<< (theBall.getVCurrentms())[i] << endl;

@@ -13,12 +13,12 @@
 class EquationODEEventFlight  : public EquationODE {
 public:
 	EquationODEEventFlight();
-	EquationODEEventFlight(double* pParametres);
+	EquationODEEventFlight(std::vector<double> pParametres);
 	~EquationODEEventFlight();
-	double* getEvaluation(double s, double* q );
+	std::vector<double>  getEvaluation(double s, std::vector<double> q );
 
 private :	
-	double* qRes;
+	std::vector<double>  qRes;
 };
 
 #endif /* EQUATIONODEEVENTFLIGHT_H_ */

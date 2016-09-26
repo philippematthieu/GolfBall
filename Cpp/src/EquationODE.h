@@ -8,20 +8,22 @@
 #ifndef EQUATIONODE_H_
 #define EQUATIONODE_H_
 
+#include <vector>
+#include <iostream>
+
 class EquationODE {
 public:
 	EquationODE();
-	EquationODE(double* pParametres);
+	EquationODE(std::vector<double> pParametres);
 
-	virtual double* getEvaluation(double s, double q[] ) = 0;
-
+	virtual std::vector<double>  getEvaluation(double s, std::vector<double>  q) = 0;
 	void setParamEq(double value, int index);
 	double getParamEq(int index);
 	int getSizeParamEq();
 	virtual ~EquationODE();
 
 protected:
-	double* parametres;
+	std::vector<double> parametres;
 };
 
 #endif /* EQUATIONODE_H_ */

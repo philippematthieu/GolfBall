@@ -64,7 +64,7 @@ public:
 	double getdt();
 	double getIndexChute();
 	double getTempsTotal();
-	double* getMatriceFlight();
+	std::vector<double> getMatriceFlight();
 	double getMaxHeight();
 	void runSimu();
 
@@ -92,12 +92,12 @@ private :
 //	SolverODE			solveFlight;
 //	SolverODE			solveRoll;
 //	EquationODERoll		eqnRoulBalle;
-	EquationODEEventFlight 	event;
+	EquationODEEventFlight 	eventFlight;
 //	EquationODEEventRoll 	eventRoll;
 	double				alphaClubPath;
 	double 				verticalLand;
-	double* 			paramEqn;// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
-	double* 			matriceFlight; // la dimension est faite par le .clone() plus loin
+	std::vector<double> paramEqn;// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
+	std::vector<double> matriceFlight; // la dimension est faite par le .clone() plus loin
 	int 				indexChute;
 	double 				spinYOrgrpm, spinZOrgrpm;
 	double 				tempsTotal;

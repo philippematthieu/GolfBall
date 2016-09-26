@@ -8,16 +8,13 @@
 #include "EquationODE.h"
 #include <string>
 #include <iostream>
+#include <vector>
+
 using namespace std;
 EquationODE::EquationODE(){
-	cout << "EquationODE(): "<< endl;
 }
 
-EquationODE::EquationODE(double* pParametres){
-	cout << "EquationODE: "<< endl;
-	//parametres = pParametres;
-	cout << "EquationODE: fin"<< endl;
-
+EquationODE::EquationODE(std::vector<double> pParametres){
 }
 
 void EquationODE::setParamEq(double value, int index) {
@@ -29,7 +26,7 @@ double EquationODE::getParamEq(int index) {
 }
 
 int EquationODE::getSizeParamEq() {
-	return sizeof(*parametres)+1 ;
+	return parametres.size();
 }
 
 EquationODE::~EquationODE() {}

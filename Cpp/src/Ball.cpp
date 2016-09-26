@@ -26,18 +26,17 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 					temperature(pGolfClub.getTemperature()),	masse(0.04545),	rayon(0.0215),
 					area(M_PI*rayon*rayon),	rhoAir(1.292*273.15/(temperature + 273)),	rhoGreen(0.131),
 					g(9.81),	timeMax(pTimeMax),	dt(pdt),	alphaClubPath(pGolfClub.getAlphaClubPathRadian()),
-					v0Initms(6)
+					v0Initms(6),paramEqn(9,0)
 {
 	numEqns = 6;
 	verticalLand = 0.0;
-	double paramEqn[9];// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
-	double* matriceFlight = new double; // la dimension est faite par le .clone() plus loin
+	//std::vector<double> paramEqn(9);// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
+	//std::vector<double> matriceFlight ; // la dimension est faite par le .clone() plus loin
 	area = M_PI*rayon*rayon;
 	indexChute = 0;
 
 	double v0Ballbfnms =  pGolfClub.getClubV0ms() * cos(pGolfClub.getDynamiqueLoftRadian())*(1.0 + pGolfClub.getEcoeff())/(1+masse/pGolfClub.getPoids()) ;// Vitesse longitudinale dans le referentiel de decollage apres impact (ref: The physics of golf: The optimum loft of a driverA. Raymond Penner)
 	double v0Ballbfpms = -pGolfClub.getClubV0ms() * sin(pGolfClub.getDynamiqueLoftRadian())/(1.0 + masse/pGolfClub.getPoids() + 2.5);     // Vitesse perpendiculaire dans le referentiel de decollage apres impact
-
 
 	// Calcule de l'angle de decollage de la balle
 	launchAngle		= pGolfClub.getDynamiqueLoftRadian() + atan(v0Ballbfpms/v0Ballbfnms);    // angle de decollage de la balle
@@ -74,22 +73,13 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	cout << "Masse: " << getMasse() << endl;
 	cout << "Rayon: " << getRayon() << endl;
 	cout << "G: " << getG() << endl;
-	cout << "paramEqn Size: " << sizeof(*paramEqn)+1 << endl;
+	cout << "paramEqn Size: " << paramEqn.size() << endl;
 
 	// declaration des instances pour le vol de la balle
 	EquationODEFlight eqnVolBalle	= EquationODEFlight(paramEqn);
+	EquationODEEventFlight eventFlight = EquationODEEventFlight(paramEqn);
+	std::vector<double>  dQ = eqnVolBalle.getEvaluation(0, v0Initms );// pour tester getEvaluation
 
-	cout << "getParam: " << eqnVolBalle.getParamEq(1) << endl;
-	eqnVolBalle.setParamEq(100.1,1) ;
-	cout << "getParam: " << eqnVolBalle.getParamEq(1) << endl;
-	paramEqn[1] = 0;
-	cout << "SizeParam: " << eqnVolBalle.getSizeParamEq() << endl;
-	cout << "EquationODEEventFlight(paramEqn)"<< endl;
-
-	EquationODEEventFlight event = EquationODEEventFlight(paramEqn);
-	cout << "Fin EquationODEEventFlight(paramEqn)"<< endl;
-	double* qResBall = (event.getEvaluation(0.01, paramEqn));
-	cout << "qResBall: "<< qResBall[1]<<endl;
 //	solveFlight = new SolverODE(eqnVolBalle, 0.0, this.getdt(), v0Initms);
 
 	// declaration des instances de roullage de la balle
@@ -234,7 +224,7 @@ double Ball::getIndexChute() {
 double Ball::getTempsTotal() {
 	return tempsTotal;
 }
-double* Ball::getMatriceFlight()
+std::vector<double>  Ball::getMatriceFlight()
 {
 	return matriceFlight;
 }
@@ -257,7 +247,7 @@ void Ball::runSimu() {
 //		 * Calcul de Runge ZeroCrossingODE
 //		 */
 //		while ( (solveFlight.getCurrentS() < this.getTimeMax()) && (! solveFlight.getZeroCrossing()) )  {
-//			solveFlight.zeroCrossing(event, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
+//			solveFlight.zeroCrossing(eventFlight, -1e-2); // si pas de zero crossing une iteration, sinon, eventFlight est true
 //			matrice.add(solveFlight.getAllQ().clone());
 //		}
 //		solveFlight.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.

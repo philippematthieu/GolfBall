@@ -7,29 +7,21 @@
 
 #include "EquationODEEventFlight.h"
 #include <string>
+#include <vector>
 #include <iostream>
 using namespace std;
 
 EquationODEEventFlight::EquationODEEventFlight(){
-	cout << "EquationODEEventFlight2.3: "<< endl;
-
 }
 
-EquationODEEventFlight::EquationODEEventFlight(double* pParametres){
-	//EquationODE::EquationODE();
-	qRes = new double[6];
-
-	cout << "debut EquationODEEventFlight: "<< endl;
-	cout << "EquationODEEventFlight fin: "<< endl;
+EquationODEEventFlight::EquationODEEventFlight(std::vector<double> pParametres): qRes(6,0){
 }
 
 EquationODEEventFlight::~EquationODEEventFlight() {
-	cout << "~EquationODEEventFlight fin: "<< endl;
-	delete qRes;
+	//delete qRes; plus besoin de delete sur vector
 }
 
-double* EquationODEEventFlight::getEvaluation(double s, double* q ) {
-
+std::vector<double>  EquationODEEventFlight::getEvaluation(double s, std::vector<double>  q) {
 	qRes[0] = 0.0;
 	qRes[1] = 0.0;
 	qRes[2] = 0.0;
