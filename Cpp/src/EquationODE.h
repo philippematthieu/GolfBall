@@ -16,10 +16,11 @@ public:
 	EquationODE();
 	EquationODE(std::vector<double> pParametres);
 
-	virtual std::vector<double>  getEvaluation(double s, std::vector<double>  q);// = 0;
-	void setParamEq(double value, int index);
-	double getParamEq(int index);
-	int getSizeParamEq();
+	virtual std::vector<double>  getEvaluation(double s, std::vector<double>  q) = 0 ;
+
+	void 	setParamEq(double value, int index);
+	double 	getParamEq(int index);
+	int 	getSizeParamEq();
 	virtual ~EquationODE();
 
 protected:

@@ -10,7 +10,8 @@
 
 SolverODE::SolverODE() {
 }
-SolverODE::SolverODE(EquationODE pEqn, double ps, double pds, std::vector<double> pq): eqn(pEqn), sCurrent(ps), ds(pds), q(pq) ,numEqns(pq.size()), bzeroCrossing(false) {
+SolverODE::SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double> pq):  sCurrent(ps), ds(pds), q(pq) ,numEqns(pq.size()), bzeroCrossing(false) {
+	eqn = pEqn;
 }
 
 SolverODE::~SolverODE() {
@@ -55,11 +56,8 @@ void SolverODE::rungeKutta4() {
 	std::vector<double> dqnew(numEqns);
 	int j;
 
-	EquationODE *tabEquation[1];
-	tabEquation[0] = &eqn;
-
 	// dZ1 = v(tn, zn)*dt
-	dq1 = tabEquation[0]->getEvaluation(getCurrentS()		, q);
+	dq1 = eqn->getEvaluation(getCurrentS()		, q);
 	for(j=0; j < numEqns; ++j) {
 		dq1[j] = dq1[j]*ds;
 	}
@@ -68,7 +66,7 @@ void SolverODE::rungeKutta4() {
 	for(j=0; j < numEqns; ++j) {
 		dqnew[j] = q[j] + 0.5*dq1[j];
 	}
-	dq2 = tabEquation[0]->getEvaluation(getCurrentS() + 0.5 * ds, dqnew);
+	dq2 = eqn->getEvaluation(getCurrentS() + 0.5 * ds, dqnew);
 	for(j=0; j < numEqns; ++j) {
 		dq2[j] = dq2[j]*ds;
 	}
@@ -77,7 +75,7 @@ void SolverODE::rungeKutta4() {
 	for(j=0; j < numEqns; ++j) {
 		dqnew[j] = q[j] + 0.5*dq2[j];
 	}
-	dq3 = tabEquation[0]->getEvaluation(getCurrentS() + 0.5 * ds, dqnew);
+	dq3 = eqn->getEvaluation(getCurrentS() + 0.5 * ds, dqnew);
 	for(j=0; j < numEqns; ++j) {
 		dq3[j] = dq3[j]*ds;
 	}
@@ -86,7 +84,7 @@ void SolverODE::rungeKutta4() {
 	for(j=0; j < numEqns; ++j) {
 		dqnew[j] = q[j] + dq3[j];
 	}
-	dq4 = tabEquation[0]->getEvaluation(getCurrentS() + ds	, dqnew);
+	dq4 = eqn->getEvaluation(getCurrentS() + ds	, dqnew);
 	for(j=0; j < numEqns; ++j) {
 		dq4[j] = dq4[j]*ds;
 	}
@@ -104,15 +102,12 @@ void SolverODE::rungeKutta4() {
  * @param event
  * @param precision
  */
-void SolverODE::zeroCrossing(EquationODE event, double precision) {
+void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 	double 				sCurrentOrg;						// temps intiale
 	double 				dsOrg;							// step temporel
 	std::vector<double> qOrg(numEqns);	// parametres depedants
 	std::vector<double> qRes(numEqns);	// parametres depedants
 	bool iter	= 		true;
-
-	EquationODE *tabEquation[1];
-	tabEquation[0] = &event;
 
 	// initialisation a la valeur avant calcul
 	sCurrentOrg = 		getCurrentS();
@@ -129,7 +124,7 @@ void SolverODE::zeroCrossing(EquationODE event, double precision) {
 		setAllQ(qOrg); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
 		setCurrentS(sCurrentOrg); 				// on remet la valeur avant le pas
 		rungeKutta4();
-		qRes 	=tabEquation[0]->getEvaluation(getCurrentS(), getAllQ());
+		qRes 	= event->getEvaluation(getCurrentS(), getAllQ());
 		iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
 		for (int i=0; i < qRes.size(); i++)
 			iter = ((qRes[i] < precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing

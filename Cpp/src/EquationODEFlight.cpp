@@ -62,7 +62,7 @@ std::vector<double>  EquationODEFlight::getEvaluation(double s, std::vector<doub
 	dragForceY		= -(dragForce)*vy / normeVitesseIn ;  														// Drag Force sur Hauteur
 	dragForceZ		= -(dragForce)*vz / normeVitesseIn ;      													// Drag Force sur largeur
 
-	liftCoeff		= getCl1 * getRayon * abs(pow(normeSpinIn  / normeVitesseIn, 0.4));					// Cl Smits and Smiths ""A new aerodynamic model of a golf ball in flight 1994"
+	liftCoeff		= getCl1 * getRayon * std::abs(pow(normeSpinIn  / normeVitesseIn, 0.4));					// Cl Smits and Smiths ""A new aerodynamic model of a golf ball in flight 1994"
 	liftForce		= 0.5 * getRhoAir * getBallArea * getRayon * liftCoeff   * normeVitesseIn * normeVitesseIn;		// calcul de la force de Magnus de l'air.
 
 	liftForceX 	= - liftForce * (wy*vz - wz*vy) / normeVitesseIn  ;

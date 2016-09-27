@@ -12,7 +12,7 @@
 class SolverODE {
 public:
 						SolverODE();
-						SolverODE(EquationODE pEqn, double ps, double pds, std::vector<double>  pq);
+						SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double>  pq);
 	virtual 			~SolverODE();
 
 	double 				getCurrentS() ;
@@ -26,10 +26,9 @@ public:
 
 	bool 				getZeroCrossing() ;
 	void 				resetZeroCrossing();
-	void 				zeroCrossing(EquationODE event, double precision);
+	void 				zeroCrossing(EquationODE *event, double precision);
 	
 	void 				rungeKutta4();
-	std::vector<double> SolverODE::getEvaluation(double s, std::vector<double>  q );
 
 private :
 	int numEqns;
@@ -40,7 +39,7 @@ private :
 	std::vector<double>  dq4;
 	double ds;
 	double sCurrent;
-	EquationODE eqn;
+	EquationODE *eqn;
 	bool bzeroCrossing;
 
 };

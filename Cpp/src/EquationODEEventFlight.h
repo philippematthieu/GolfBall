@@ -15,7 +15,7 @@ public:
 	EquationODEEventFlight();
 	EquationODEEventFlight(std::vector<double> pParametres);
 	~EquationODEEventFlight();
-	std::vector<double>  getEvaluation(double s, std::vector<double> q );
+	std::vector<double>  getEvaluation(double s, std::vector<double> q ) ;
 
 private :	
 	std::vector<double>  qRes;

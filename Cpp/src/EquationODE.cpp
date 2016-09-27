@@ -16,11 +16,8 @@ EquationODE::EquationODE(){
 
 EquationODE::EquationODE(std::vector<double> pParametres){
 }
- std::vector<double>  getEvaluation(double s, std::vector<double>  q){
-	 return q;
- }
 
-void EquationODE::setParamEq(double value, int index) {
+void EquationODE::setParamEq(double value, int index)	{
 	parametres[index] = value;
 }
 

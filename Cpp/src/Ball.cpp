@@ -80,8 +80,8 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	eqnVolBalle	= EquationODEFlight(paramEqn);
 	eventFlight = EquationODEEventFlight(paramEqn);
 
-	solveFlight = SolverODE(eqnVolBalle, 0.0, getdt(), v0Initms);
-	solveFlight.zeroCrossing(eventFlight, -1e-2);
+	solveFlight = SolverODE(&eqnVolBalle, 0.0, getdt(), v0Initms);
+	solveFlight.zeroCrossing(&eventFlight, -1e-2);
 	// declaration des instances de roullage de la balle
 //	eqnRoulBalle= new EquationODERoll(paramEqn);
 //	eventRoll	= new EquationODEEventRoll(paramEqn);
