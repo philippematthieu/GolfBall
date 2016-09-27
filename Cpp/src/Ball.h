@@ -15,6 +15,7 @@
 #include "Club.h"
 #include "EquationODEFlight.h"
 #include "EquationODEEventFlight.h"
+#include "SolverODE.h"
 
 using namespace std;
 class Ball {
@@ -89,7 +90,7 @@ private :
 	double				timeMax;			// temps max de l'ODE
 	double				dt;					// pas de temps
 	EquationODEFlight	eqnVolBalle;
-//	SolverODE			solveFlight;
+	SolverODE			solveFlight;
 //	SolverODE			solveRoll;
 //	EquationODERoll		eqnRoulBalle;
 	EquationODEEventFlight 	eventFlight;

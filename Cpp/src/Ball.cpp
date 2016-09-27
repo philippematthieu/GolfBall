@@ -16,6 +16,7 @@
 #include "EquationODEFlight.h"
 #include "EquationODEEventFlight.h"
 #include "Ball.h"
+#include "SolverODE.h"
 
 using namespace std;
 
@@ -76,12 +77,11 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	cout << "paramEqn Size: " << paramEqn.size() << endl;
 
 	// declaration des instances pour le vol de la balle
-	EquationODEFlight eqnVolBalle	= EquationODEFlight(paramEqn);
-	EquationODEEventFlight eventFlight = EquationODEEventFlight(paramEqn);
-	std::vector<double>  dQ = eqnVolBalle.getEvaluation(0, v0Initms );// pour tester getEvaluation
+	eqnVolBalle	= EquationODEFlight(paramEqn);
+	eventFlight = EquationODEEventFlight(paramEqn);
 
-//	solveFlight = new SolverODE(eqnVolBalle, 0.0, this.getdt(), v0Initms);
-
+	solveFlight = SolverODE(eqnVolBalle, 0.0, getdt(), v0Initms);
+	solveFlight.zeroCrossing(eventFlight, -1e-2);
 	// declaration des instances de roullage de la balle
 //	eqnRoulBalle= new EquationODERoll(paramEqn);
 //	eventRoll	= new EquationODEEventRoll(paramEqn);
