@@ -7,11 +7,13 @@
 
 #include "SolverODE.h"
 #include "EquationODE.h"
+#include <vector>
 
 SolverODE::SolverODE() {
 }
-SolverODE::SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double> pq):  sCurrent(ps), ds(pds), q(pq) ,numEqns(pq.size()), bzeroCrossing(false) {
+SolverODE::SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double> pq):  sCurrent(ps), ds(pds), q(pq) ,numEqns(pq.size()) {
 	eqn = pEqn;
+	bzeroCrossing = false;
 }
 
 SolverODE::~SolverODE() {
@@ -47,7 +49,12 @@ bool SolverODE::getZeroCrossing() {
 void SolverODE::resetZeroCrossing() {
 	bzeroCrossing = false;
 }
-
+EquationODE *SolverODE::getEquationODE()	{
+		return eqn;
+	}
+void SolverODE::setEquationODE(EquationODE *pEqn) {
+	eqn = pEqn;
+	}
 
 /**
  *  Fourth-order Runge-Kutta ODE solver.
@@ -55,6 +62,10 @@ void SolverODE::resetZeroCrossing() {
 void SolverODE::rungeKutta4() {
 	std::vector<double> dqnew(numEqns);
 	int j;
+	std::vector<double>  dq1(numEqns);
+	std::vector<double>  dq2(numEqns);
+	std::vector<double>  dq3(numEqns);
+	std::vector<double>  dq4(numEqns);
 
 	// dZ1 = v(tn, zn)*dt
 	dq1 = eqn->getEvaluation(getCurrentS()		, q);
@@ -114,6 +125,7 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 	dsOrg 		= 		ds;
 	qOrg 		= 		getAllQ();
 
+	setEquationODE(event);
 	rungeKutta4();
 	// si les valeurs de qRes sont positives, on renvoie le q de rungeKutta en sortant
 	// si l'une des valeurs de retour qRes est < (-precision) on reprend le pas precedent positif avec un calcul � ds/2.
@@ -126,12 +138,12 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 		rungeKutta4();
 		qRes 	= event->getEvaluation(getCurrentS(), getAllQ());
 		iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
-		for (int i=0; i < qRes.size(); i++)
+		for (unsigned  i=0; i < qRes.size(); i++)
 			iter = ((qRes[i] < precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing
 		ds =ds/2.0;								// on diminue le pas de temps
 	}
 	ds = dsOrg;									// on reprend le pas de temps intiale
 	bzeroCrossing = true;
-	for (int i=0; i < qRes.size(); i++)
+	for (unsigned  i=0; i < qRes.size(); i++)
 		bzeroCrossing = (((precision <= qRes[i]) && (qRes[i] <= 0)) && bzeroCrossing); // si l'un des q n'est pas dans le range entre (-precision) < qRes < 0, pas de zero crossing
 }

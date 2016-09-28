@@ -6,7 +6,6 @@
  */
 #include "EquationODE.h"
 
-
 #ifndef EQUATIONODEEVENTFLIGHT_H_
 #define EQUATIONODEEVENTFLIGHT_H_
 
@@ -14,8 +13,8 @@ class EquationODEEventFlight  : public EquationODE {
 public:
 	EquationODEEventFlight();
 	EquationODEEventFlight(std::vector<double> pParametres);
-	~EquationODEEventFlight();
-	std::vector<double>  getEvaluation(double s, std::vector<double> q ) ;
+	virtual ~EquationODEEventFlight();
+	virtual std::vector<double>  getEvaluation(double s, std::vector<double> q ) ;
 
 private :	
 	std::vector<double>  qRes;

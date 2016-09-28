@@ -15,6 +15,8 @@
 #include "Club.h"
 #include "EquationODEFlight.h"
 #include "EquationODEEventFlight.h"
+#include "EquationODERoll.h"
+#include "EquationODEEventRoll.h"
 #include "Ball.h"
 #include "SolverODE.h"
 
@@ -23,11 +25,11 @@ using namespace std;
 Ball::Ball() {}
 Ball::~Ball() {}
 Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, double pTimeMax, double pdt):
-					marque(pMarque),	nbAlveoles(pNbAlveoles),	nbPieces(pNbPieces),
-					temperature(pGolfClub.getTemperature()),	masse(0.04545),	rayon(0.0215),
-					area(M_PI*rayon*rayon),	rhoAir(1.292*273.15/(temperature + 273)),	rhoGreen(0.131),
-					g(9.81),	timeMax(pTimeMax),	dt(pdt),	alphaClubPath(pGolfClub.getAlphaClubPathRadian()),
-					v0Initms(6),paramEqn(9,0)
+									marque(pMarque),	nbAlveoles(pNbAlveoles),	nbPieces(pNbPieces),
+									temperature(pGolfClub.getTemperature()),	masse(0.04545),	rayon(0.0215),
+									area(M_PI*rayon*rayon),	rhoAir(1.292*273.15/(temperature + 273)),	rhoGreen(0.131),
+									g(9.81),	timeMax(pTimeMax),	dt(pdt),	alphaClubPath(pGolfClub.getAlphaClubPathRadian()),
+									v0Initms(6),paramEqn(9,0)
 {
 	numEqns = 6;
 	verticalLand = 0.0;
@@ -79,13 +81,12 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	// declaration des instances pour le vol de la balle
 	eqnVolBalle	= EquationODEFlight(paramEqn);
 	eventFlight = EquationODEEventFlight(paramEqn);
-
 	solveFlight = SolverODE(&eqnVolBalle, 0.0, getdt(), v0Initms);
-	solveFlight.zeroCrossing(&eventFlight, -1e-2);
+
 	// declaration des instances de roullage de la balle
-//	eqnRoulBalle= new EquationODERoll(paramEqn);
-//	eventRoll	= new EquationODEEventRoll(paramEqn);
-//	solveRoll 	= new SolverODE(eqnRoulBalle, 0.0, this.getdt(), v0Initms);
+	eqnRoulBalle= EquationODERoll(paramEqn);
+	eventRoll	= EquationODEEventRoll(paramEqn);
+	solveRoll 	= SolverODE(&eqnRoulBalle, 0.0, getdt(), v0Initms);
 }
 // methodes pour constantes et variables du systeme
 int Ball::getNumEqns() {
@@ -224,7 +225,7 @@ double Ball::getIndexChute() {
 double Ball::getTempsTotal() {
 	return tempsTotal;
 }
-std::vector<double>  Ball::getMatriceFlight()
+std::vector< std::vector<double> >  Ball::getMatriceFlight()
 {
 	return matriceFlight;
 }
@@ -238,113 +239,116 @@ double Ball::getMaxHeight()
  * author Matthieu PHILIPPE
  **/
 void Ball::runSimu() {
-//	double* matrice = new double; // la dimension est faite par le .clone() plus loin
-//
-//	double vi, thetaRebond, vixprime, vrxprime, vizprime, vrzprime, eBall, muFrictionCritic, wr, vr, vrx, vry, vrz, impactAngle;
-//	double muFriction = 0.40;
-//	for (int i = 0;i < 3;i++) {
-//		/**
-//		 * Calcul de Runge ZeroCrossingODE
-//		 */
-//		while ( (solveFlight.getCurrentS() < this.getTimeMax()) && (! solveFlight.getZeroCrossing()) )  {
-//			solveFlight.zeroCrossing(eventFlight, -1e-2); // si pas de zero crossing une iteration, sinon, eventFlight est true
-//			matrice.add(solveFlight.getAllQ().clone());
-//		}
-//		solveFlight.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
-//		// sortie de la boucle while
-//		/**
-//		 *  calcul du vecteur vitesse et spin apres rebond
-//		 *  @param : double muFriction = 0.40;
-//		 *  @param : longueur Vx = getQ(1), lageur Vy = getQ(3), hauteur Vz = getQ(5),
-//		 *  @pram : rayon, getSpinY()
-//		 */
-//		vi			= sqrt(solveFlight.getQ(1)*solveFlight.getQ(1)+solveFlight.getQ(3)*solveFlight.getQ(3)); // calcul de la nouvelle norme de la vitesse de la balle dans le plan vertical de lancement ==> Vy = 0 car on considere que la balle apres rebond continue dans l'axe X (pour le moment)
-//		impactAngle = atan(abs(vi/solveFlight.getQ(5)));
-//		thetaRebond = 0.2687807 * sqrt(vi*vi+solveFlight.getQ(5)*solveFlight.getQ(5))/18.6*(impactAngle/0.7749262 ); // en m/s et degre
-//		vixprime 	= vi * cos(thetaRebond) - abs(solveFlight.getQ(5)) * sin(thetaRebond);
-//		vizprime 	= vi * sin(thetaRebond) + abs(solveFlight.getQ(5)) * cos(thetaRebond);
-//		if (abs(vizprime) < 20.0) {
-//			eBall 	= 0.510 - 0.0375 * abs(vizprime) + 0.000903 * abs(vizprime*vizprime);
-//		}
-//		else {
-//			eBall 	= 0.120;
-//		}
-//		muFrictionCritic = 2.0 * (vixprime + getRayon() * this.getSpinY()) / (7.0*(1+eBall) * abs(vizprime));
-//
-//		if (muFriction < muFrictionCritic) {
-//			vrxprime 	= vixprime - muFriction * abs(vizprime) *(1.0 + eBall);
-//			vrzprime 	= eBall * abs(vizprime);
-//			wr 			= this.getSpinY() - (5.0 * muFriction * 2.0 * getRayon()) * abs(vizprime) * (1.0 + eBall); // nouveau spinY
-//		}
-//		else {
-//			vrxprime 	= 5.0/7.0*vixprime - 2.0/7.0*getRayon()*this.getSpinY();
-//			vrzprime 	= eBall * abs(vizprime);
-//			wr 			= -vrxprime / getRayon(); 											// nouveau spinY
-//		}
-//		vr 		= vrxprime * cos(thetaRebond) - vrzprime * sin(thetaRebond); 	// nouvelle norme de la vitesse de la balle
-//		vrz 	= vrxprime * sin(thetaRebond) + vrzprime * cos(thetaRebond); 	// Hauteur
-//		vrx 	= vr / vi * solveFlight.getQ(1);										// longueur
-//		vry		= vr / vi * solveFlight.getQ(3);										// largeur
-//		/**
-//		 * fin calcul du vecteur vitesse et spin apres rebond
-//		 */
-//		/**
-//		 *  mise a jour des nouvelles donnees apres rebond pour la resolution suivante.
-//		 */
-//		solveFlight.setQ(vrx, 1); 						// positionne les nouvelles valeurs  dt+1
-//		solveFlight.setQ(vry, 3);
-//		solveFlight.setQ(vrz, 5);
-//		solveFlight.setQ(0, 4);							// La nouvelle position de la hauteur est 0
-//		// mise a jour du spin
-//		solveFlight.getEquationODE().setParamEq(0,0);	// wx et le this.SpinX
-//		solveFlight.getEquationODE().setParamEq(wr,1);	// wy et le this.SpinY
-//		solveFlight.getEquationODE().setParamEq(0,2);	// wz et le this.SpinZ
-//		// enregistrement du point de chutte
-//		if (i == 0) {
-//			indexChute = matrice.size();
-//			verticalLand = impactAngle;
-//		}
-//	} // fin de la boucle for 3 rebonds
-//
-//	/**
-//	 *  Resolution du roullage avec nouvelle equation
-//	 *  @param : longueur Vx = getQ(1), lageur Vy = getQ(3), hauteur Vz = getQ(5),
-//	 */
-//	eqnRoulBalle.setParamEq(this.getRhoG(), 4);	// positionne le parametre de densite de green.
-//
-//	solveRoll.setQ(solveFlight.getQ(0), 0); 	// initialisation des positions vitesse au sol pour le roulage
-//	solveRoll.setQ(solveFlight.getQ(1), 1);
-//	solveRoll.setQ(solveFlight.getQ(2), 2);
-//	solveRoll.setQ(solveFlight.getQ(3), 3);
-//	solveRoll.setQ(solveFlight.getQ(4), 4);
-//	solveRoll.setQ(solveFlight.getQ(5), 5);
-//	/**
-//	 * Calcul de Runge Kutta
-//	 */
-//	while ( (solveRoll.getCurrentS() < this.getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
-//		solveRoll.zeroCrossing(eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
-//		// mise a jour des donnees courrantes
-//		matrice.add(solveRoll.getAllQ().clone());
-//	}
-//	solveRoll.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
-//	/**
-//	 * fin du roullage
-//	 */
-//	for (double[] j : matrice) {
-//		/**
-//		 * mise a jour des donnees courrantes et rotation vers nouveau referentiel prenant en compte la direction initiale du club
-//		 */
-//		this.setX( j[0]  * cos(alphaClubPath) + j[2] * sin(alphaClubPath));
-//		this.setVx(j[1]  * cos(alphaClubPath) + j[3] * sin(alphaClubPath));
-//		this.setY(-j[0]  * sin(alphaClubPath) + j[2] * cos(alphaClubPath));
-//		this.setVy(-j[1] * sin(alphaClubPath) + j[3] * cos(alphaClubPath));
-//		this.setZ( j[4]);
-//		this.setVz(j[5]);
-//		matriceFlight.add(this.getVCurrentms().clone());
-//		maxHeight = max(maxHeight, j[4]); // sauvegarde de la hauteur max atteinte
-//	}
-//	tempsTotal = solveRoll.getCurrentS() + solveFlight.getCurrentS();
-//	return;
+	std::vector< std::vector<double> > matrice; // la dimension est faite par le .clone() plus loin
+	double vi, thetaRebond, vixprime, vrxprime, vizprime, vrzprime, eBall, muFrictionCritic, wr, vr, vrx, vry, vrz, impactAngle;
+	double muFriction = 0.40;
+
+	for (int i = 0;i < 3;i++) {
+		/**
+		 * Calcul de Runge ZeroCrossingODE
+		 */
+		while ( (solveFlight.getCurrentS() < getTimeMax()) && (! solveFlight.getZeroCrossing()) )  {
+			solveFlight.zeroCrossing(&eventFlight, -1e-2); // si aucun zero-crossing et temps < temps max, alors on continue, sinon on boucle pour trouver un pas de calcul au dessus du zero-crossing.
+			matrice.push_back(solveFlight.getAllQ());
+		}
+		solveFlight.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
+		// sortie de la boucle while
+		/**
+		 *  calcul du vecteur vitesse et spin apres rebond
+		 *  @param : double muFriction = 0.40;
+		 *  @param : longueur Vx = getQ(1), lageur Vy = getQ(3), hauteur Vz = getQ(5),
+		 *  @pram : rayon, getSpinY()
+		 */
+		vi			= sqrt(solveFlight.getQ(1)*solveFlight.getQ(1)+solveFlight.getQ(3)*solveFlight.getQ(3)); // calcul de la nouvelle norme de la vitesse de la balle dans le plan vertical de lancement ==> Vy = 0 car on considere que la balle apres rebond continue dans l'axe X (pour le moment)
+		impactAngle = atan(abs(vi/solveFlight.getQ(5)));
+		thetaRebond = 0.2687807 * sqrt(vi*vi+solveFlight.getQ(5)*solveFlight.getQ(5))/18.6*(impactAngle/0.7749262 ); // en m/s et degre
+		vixprime 	= vi * cos(thetaRebond) - abs(solveFlight.getQ(5)) * sin(thetaRebond);
+		vizprime 	= vi * sin(thetaRebond) + abs(solveFlight.getQ(5)) * cos(thetaRebond);
+		if (abs(vizprime) < 20.0) {
+			eBall 	= 0.510 - 0.0375 * abs(vizprime) + 0.000903 * abs(vizprime*vizprime);
+		}
+		else {
+			eBall 	= 0.120;
+		}
+		muFrictionCritic = 2.0 * (vixprime + getRayon() * getSpinY()) / (7.0*(1+eBall) * abs(vizprime));
+
+		if (muFriction < muFrictionCritic) {
+			vrxprime 	= vixprime - muFriction * abs(vizprime) *(1.0 + eBall);
+			vrzprime 	= eBall * abs(vizprime);
+			wr 			= getSpinY() - (5.0 * muFriction * 2.0 * getRayon()) * abs(vizprime) * (1.0 + eBall); // nouveau spinY
+		}
+		else {
+			vrxprime 	= 5.0/7.0*vixprime - 2.0/7.0*getRayon()*getSpinY();
+			vrzprime 	= eBall * abs(vizprime);
+			wr 			= -vrxprime / getRayon(); 											// nouveau spinY
+		}
+		vr 		= vrxprime * cos(thetaRebond) - vrzprime * sin(thetaRebond); 	// nouvelle norme de la vitesse de la balle
+		vrz 	= vrxprime * sin(thetaRebond) + vrzprime * cos(thetaRebond); 	// Hauteur
+		vrx 	= vr / vi * solveFlight.getQ(1);										// longueur
+		vry		= vr / vi * solveFlight.getQ(3);										// largeur
+		/**
+		 * fin calcul du vecteur vitesse et spin apres rebond
+		 */
+		/**
+		 *  mise a jour des nouvelles donnees apres rebond pour la resolution suivante.
+		 */
+		solveFlight.setQ(vrx, 1); 						// positionne les nouvelles valeurs  dt+1
+		solveFlight.setQ(vry, 3);
+		solveFlight.setQ(vrz, 5);
+		solveFlight.setQ(0, 4);							// La nouvelle position de la hauteur est 0
+		// mise a jour du spin
+		solveFlight.getEquationODE()->setParamEq(0,0);	// wx et le this.SpinX
+		solveFlight.getEquationODE()->setParamEq(wr,1);	// wy et le this.SpinY
+		solveFlight.getEquationODE()->setParamEq(0,2);	// wz et le this.SpinZ
+		// enregistrement du point de chutte
+		if (i == 0) {
+			indexChute = matrice.size();
+			verticalLand = impactAngle;
+		}
+	} // fin de la boucle for 3 rebonds
+
+	/**
+	 *  Resolution du roullage avec nouvelle equation
+	 *  @param : longueur Vx = getQ(1), lageur Vy = getQ(3), hauteur Vz = getQ(5),
+	 */
+	eqnRoulBalle.setParamEq(getRhoG(), 4);	// positionne le parametre de densite de green.
+
+	solveRoll.setQ(solveFlight.getQ(0), 0); 	// initialisation des positions vitesse au sol pour le roulage
+	solveRoll.setQ(solveFlight.getQ(1), 1);
+	solveRoll.setQ(solveFlight.getQ(2), 2);
+	solveRoll.setQ(solveFlight.getQ(3), 3);
+	solveRoll.setQ(solveFlight.getQ(4), 4);
+	solveRoll.setQ(solveFlight.getQ(5), 5);
+	/**
+	 * Calcul de Runge Kutta
+	 */
+	while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
+		solveRoll.zeroCrossing(&eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
+		// mise a jour des donnees courrantes
+		matrice.push_back(solveRoll.getAllQ());
+	}
+	solveRoll.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
+	/**
+	 * fin du roullage
+	 */
+	for (unsigned  i=0; i < matrice.size(); i++) {
+		/**
+		 * mise a jour des donnees courrantes et rotation vers nouveau referentiel prenant en compte la direction initiale du club
+		 */
+		setX( matrice[i][0]  * cos(alphaClubPath) + matrice[i][2] * sin(alphaClubPath));
+		setVx(matrice[i][1]  * cos(alphaClubPath) + matrice[i][3] * sin(alphaClubPath));
+		setY(-matrice[i][0]  * sin(alphaClubPath) + matrice[i][2] * cos(alphaClubPath));
+		setVy(-matrice[i][1] * sin(alphaClubPath) + matrice[i][3] * cos(alphaClubPath));
+		setZ( matrice[i][4]);
+		setVz(matrice[i][5]);
+		matriceFlight.push_back(getVCurrentms());
+		maxHeight = std::max(maxHeight, matrice[i][4]); // sauvegarde de la hauteur max atteinte
+		cout << " == " << getX() << " ; " << getY() << " ; " <<  getZ()<< endl;
+	}
+	tempsTotal = solveRoll.getCurrentS() + solveFlight.getCurrentS();
+	cout << "Temps Total : " <<  tempsTotal << endl;
+
+	return;
 }
 /**
  * Fin de runSimu()

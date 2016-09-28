@@ -15,9 +15,12 @@
 #include "Club.h"
 #include "EquationODEFlight.h"
 #include "EquationODEEventFlight.h"
+#include "EquationODERoll.h"
+#include "EquationODEEventRoll.h"
 #include "SolverODE.h"
 
 using namespace std;
+
 class Ball {
 public:
 	Ball();
@@ -65,7 +68,7 @@ public:
 	double getdt();
 	double getIndexChute();
 	double getTempsTotal();
-	std::vector<double> getMatriceFlight();
+	std::vector< std::vector<double> >  getMatriceFlight();
 	double getMaxHeight();
 	void runSimu();
 
@@ -91,14 +94,14 @@ private :
 	double				dt;					// pas de temps
 	EquationODEFlight	eqnVolBalle;
 	SolverODE			solveFlight;
-//	SolverODE			solveRoll;
-//	EquationODERoll		eqnRoulBalle;
+	SolverODE			solveRoll;
+	EquationODERoll		eqnRoulBalle;
 	EquationODEEventFlight 	eventFlight;
-//	EquationODEEventRoll 	eventRoll;
+	EquationODEEventRoll 	eventRoll;
 	double				alphaClubPath;
 	double 				verticalLand;
 	std::vector<double> paramEqn;// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG
-	std::vector<double> matriceFlight; // la dimension est faite par le .clone() plus loin
+	std::vector< std::vector<double> > matriceFlight; // la dimension est faite par le .clone() plus loin
 	int 				indexChute;
 	double 				spinYOrgrpm, spinZOrgrpm;
 	double 				tempsTotal;

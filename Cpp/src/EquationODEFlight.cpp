@@ -15,6 +15,9 @@ EquationODEFlight::EquationODEFlight(std::vector<double> pParametres) {
 	parametres = pParametres;
 }
 
+EquationODEFlight::~EquationODEFlight(){
+	}
+
 std::vector<double>  EquationODEFlight::getEvaluation(double s, std::vector<double>  q ) {
 	/**
 	 * @author

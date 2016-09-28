@@ -6,19 +6,18 @@
  */
 
 #include "EquationODEEventFlight.h"
-#include <string>
 #include <vector>
-#include <iostream>
+
 using namespace std;
 
 EquationODEEventFlight::EquationODEEventFlight(){
 }
 
-EquationODEEventFlight::EquationODEEventFlight(std::vector<double> pParametres): qRes(6,0){
+EquationODEEventFlight::EquationODEEventFlight(std::vector<double> pParametres): qRes(6,0) {
+	parametres = pParametres;
 }
 
 EquationODEEventFlight::~EquationODEEventFlight() {
-	//delete qRes; plus besoin de delete sur vector
 }
 
 std::vector<double>  EquationODEEventFlight::getEvaluation(double s, std::vector<double>  q)  {

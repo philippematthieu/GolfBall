@@ -15,6 +15,7 @@ EquationODE::EquationODE(){
 }
 
 EquationODE::EquationODE(std::vector<double> pParametres){
+	parametres = pParametres;
 }
 
 void EquationODE::setParamEq(double value, int index)	{

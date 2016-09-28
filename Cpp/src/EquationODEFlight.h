@@ -14,7 +14,8 @@ class EquationODEFlight  : public EquationODE {
 public:
 	EquationODEFlight();
 	EquationODEFlight(std::vector<double> pParametres);
-	std::vector<double>  getEvaluation(double s, std::vector<double>  q ) ;
+	virtual ~EquationODEFlight();
+	virtual std::vector<double>  getEvaluation(double s, std::vector<double>  q ) ;
 };
 
 #endif /* EQUATIONODEFLIGHT_H_ */

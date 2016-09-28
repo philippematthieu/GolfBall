@@ -9,6 +9,7 @@
 #define SOLVERODE_H_
 #include "EquationODE.h"
 
+
 class SolverODE {
 public:
 						SolverODE();
@@ -24,6 +25,9 @@ public:
 	std::vector<double>	getAllQ();
 	void 				setAllQ(std::vector<double> allQ) ;
 
+	EquationODE			*getEquationODE();
+	void 				setEquationODE(EquationODE *pEqn);
+
 	bool 				getZeroCrossing() ;
 	void 				resetZeroCrossing();
 	void 				zeroCrossing(EquationODE *event, double precision);
@@ -33,15 +37,10 @@ public:
 private :
 	int numEqns;
 	std::vector<double>  q;
-	std::vector<double>  dq1;
-	std::vector<double>  dq2;
-	std::vector<double>  dq3;
-	std::vector<double>  dq4;
 	double ds;
 	double sCurrent;
 	EquationODE *eqn;
 	bool bzeroCrossing;
-
 };
 
 #endif /* SOLVERODE_H_ */
