@@ -25,11 +25,11 @@ using namespace std;
 Ball::Ball() {}
 Ball::~Ball() {}
 Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, double pTimeMax, double pdt):
-									marque(pMarque),	nbAlveoles(pNbAlveoles),	nbPieces(pNbPieces),
-									temperature(pGolfClub.getTemperature()),	masse(0.04545),	rayon(0.0215),
-									area(M_PI*rayon*rayon),	rhoAir(1.292*273.15/(temperature + 273)),	rhoGreen(0.131),
-									g(9.81),	timeMax(pTimeMax),	dt(pdt),	alphaClubPath(pGolfClub.getAlphaClubPathRadian()),
-									v0Initms(6),paramEqn(9,0)
+													marque(pMarque),	nbAlveoles(pNbAlveoles),	nbPieces(pNbPieces),
+													temperature(pGolfClub.getTemperature()),	masse(0.04545),	rayon(0.0215),
+													area(M_PI*rayon*rayon),	rhoAir(1.292*273.15/(temperature + 273)),	rhoGreen(0.131),
+													g(9.81),	timeMax(pTimeMax),	dt(pdt),	alphaClubPath(pGolfClub.getAlphaClubPathRadian()),
+													v0Initms(6),paramEqn(9,0)
 {
 	numEqns = 6;
 	verticalLand = 0.0;
@@ -37,15 +37,16 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	//std::vector<double> matriceFlight ; // la dimension est faite par le .clone() plus loin
 	area = M_PI*rayon*rayon;
 	indexChute = 0;
+	Club clubToTest = pGolfClub;
 
-	double v0Ballbfnms =  pGolfClub.getClubV0ms() * cos(pGolfClub.getDynamiqueLoftRadian())*(1.0 + pGolfClub.getEcoeff())/(1+masse/pGolfClub.getPoids()) ;// Vitesse longitudinale dans le referentiel de decollage apres impact (ref: The physics of golf: The optimum loft of a driverA. Raymond Penner)
-	double v0Ballbfpms = -pGolfClub.getClubV0ms() * sin(pGolfClub.getDynamiqueLoftRadian())/(1.0 + masse/pGolfClub.getPoids() + 2.5);     // Vitesse perpendiculaire dans le referentiel de decollage apres impact
+	double v0Ballbfnms =  clubToTest.getClubV0ms() * cos(clubToTest.getDynamiqueLoftRadian())*(1.0 + clubToTest.getEcoeff())/(1+masse/clubToTest.getPoids()) ;// Vitesse longitudinale dans le referentiel de decollage apres impact (ref: The physics of golf: The optimum loft of a driverA. Raymond Penner)
+	double v0Ballbfpms = -clubToTest.getClubV0ms() * sin(clubToTest.getDynamiqueLoftRadian())/(1.0 + masse/clubToTest.getPoids() + 2.5);     // Vitesse perpendiculaire dans le referentiel de decollage apres impact
 
 	// Calcule de l'angle de decollage de la balle
-	launchAngle		= pGolfClub.getDynamiqueLoftRadian() + atan(v0Ballbfpms/v0Ballbfnms);    // angle de decollage de la balle
+	launchAngle		= clubToTest.getDynamiqueLoftRadian() + atan(v0Ballbfpms/v0Ballbfnms);    // angle de decollage de la balle
 
 	// Calcule de la vitesse initial de la ball
-	v0BallInitms	= sqrt(v0Ballbfnms*v0Ballbfnms + v0Ballbfpms*v0Ballbfpms)* (1.0 - 0.3556 * pGolfClub.getMiss()); // Vitesse de decollage de la balle
+	v0BallInitms	= sqrt(v0Ballbfnms*v0Ballbfnms + v0Ballbfpms*v0Ballbfpms)* (1.0 - 0.3556 * clubToTest.getMiss()); // Vitesse de decollage de la balle
 	v0Initms[1] 	=  v0BallInitms * cos(launchAngle) * cos(0.0);     // Vx
 	v0Initms[3] 	= -v0BallInitms * cos(launchAngle) * sin(0.0);     // Vy
 	v0Initms[5] 	=  v0BallInitms * sin(launchAngle);                // Vz
@@ -58,21 +59,21 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 
 	// Calcul des SPINs qui sont des parametre de l'ODE
 	paramEqn[0] = 0; 																									// wx Le SPIN sur l'axe X n'est pas une composante dans l'axe du chemin de club. Le spin est appliqu� sur le plan du sol
-	paramEqn[1] = v0Initms[1] * sin(pGolfClub.getDynamiqueLoftRadian())    * pGolfClub.getCoeffBackSpin() / 9.54929659643;	// wy Spin dans l'axe largeur backspin
-	paramEqn[2] = v0Initms[5] * sin(pGolfClub.getGamaFacePathRadian()) * pGolfClub.getCoeffSpinLift() / 9.54929659643;	// wz Spin dans l'axe hauteur lift
+	paramEqn[1] = v0Initms[1] * sin(clubToTest.getDynamiqueLoftRadian())    * clubToTest.getCoeffBackSpin() / 9.54929659643;	// wy Spin dans l'axe largeur backspin
+	paramEqn[2] = v0Initms[5] * sin(clubToTest.getGamaFacePathRadian()) * clubToTest.getCoeffSpinLift() / 9.54929659643;	// wz Spin dans l'axe hauteur lift
 	spinYOrgrpm = paramEqn[1]*9.54929659643; // sauvegarde des Spin d'origine
 	spinZOrgrpm = paramEqn[2]*9.54929659643;
 
 	paramEqn[3] = getRayon();
 	paramEqn[4] = getRhoAir();
 	paramEqn[5] = getBallArea();
-	paramEqn[6] = pGolfClub.getCl1();
+	paramEqn[6] = clubToTest.getCl1();
 	paramEqn[7] = getMasse();
 	paramEqn[8] = getG();
 
 	cout << "RhoAir: " << getRhoAir() << endl;
 	cout << "BallAreaSection: " << getBallArea() << endl;
-	cout << "Cl1: " << pGolfClub.getCl1() << endl;
+	cout << "Cl1: " << clubToTest.getCl1() << endl;
 	cout << "Masse: " << getMasse() << endl;
 	cout << "Rayon: " << getRayon() << endl;
 	cout << "G: " << getG() << endl;
@@ -87,6 +88,9 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	eqnRoulBalle= EquationODERoll(paramEqn);
 	eventRoll	= EquationODEEventRoll(paramEqn);
 	solveRoll 	= SolverODE(&eqnRoulBalle, 0.0, getdt(), v0Initms);
+
+	unsigned i=0;
+	cout << "getV0Initms: "  << v0Initms[0] << " ; " <<3.6* v0Initms[1]   << " ; " << v0Initms[2]   << " ; " << 3.6*v0Initms[3]   << " ; " << v0Initms[4] <<" ; " << 3.6*v0Initms[5]   << endl;
 }
 // methodes pour constantes et variables du systeme
 int Ball::getNumEqns() {

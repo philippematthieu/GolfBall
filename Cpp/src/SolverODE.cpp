@@ -136,7 +136,7 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 		setAllQ(qOrg); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
 		setCurrentS(sCurrentOrg); 				// on remet la valeur avant le pas
 		rungeKutta4();
-		qRes 	= event->getEvaluation(getCurrentS(), getAllQ());
+		qRes = event->getEvaluation(getCurrentS(), getAllQ());
 		iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
 		for (unsigned  i=0; i < qRes.size(); i++)
 			iter = ((qRes[i] < precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing

@@ -20,7 +20,7 @@ EquationODEEventFlight::EquationODEEventFlight(std::vector<double> pParametres):
 EquationODEEventFlight::~EquationODEEventFlight() {
 }
 
-std::vector<double>  EquationODEEventFlight::getEvaluation(double s, std::vector<double>  q)  {
+std::vector<double>  EquationODEEventFlight::getEvaluation(double s,std::vector<double>  q)  {
 	qRes[0] = 0.0;
 	qRes[1] = 0.0;
 	qRes[2] = 0.0;
