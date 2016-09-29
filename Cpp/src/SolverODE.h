@@ -25,7 +25,7 @@ public:
 	std::vector<double>	getAllQ();
 	void 				setAllQ(std::vector<double> allQ) ;
 
-	EquationODE			*getEquationODE();
+	virtual EquationODE			*getEquationODE();
 	void 				setEquationODE(EquationODE *pEqn);
 
 	bool 				getZeroCrossing() ;

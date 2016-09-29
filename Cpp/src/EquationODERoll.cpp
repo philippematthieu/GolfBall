@@ -11,9 +11,8 @@
 EquationODERoll::EquationODERoll() {
 }
 
-EquationODERoll::EquationODERoll(std::vector<double> pParametres) {
-	parametres = pParametres;
-}
+EquationODERoll::EquationODERoll(std::vector<double> pParametres) :  EquationODE(pParametres) {
+	}
 
 EquationODERoll::~EquationODERoll() {
 }

@@ -68,7 +68,7 @@ void SolverODE::rungeKutta4() {
 	std::vector<double>  dq4(numEqns);
 
 	// dZ1 = v(tn, zn)*dt
-	dq1 = eqn->getEvaluation(getCurrentS()		, q);
+	dq1 = (getEquationODE())->getEvaluation(getCurrentS()		, q);
 	for(j=0; j < numEqns; ++j) {
 		dq1[j] = dq1[j]*ds;
 	}
@@ -125,7 +125,7 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 	dsOrg 		= 		ds;
 	qOrg 		= 		getAllQ();
 
-	setEquationODE(event);
+	//setEquationODE(event);
 	rungeKutta4();
 	// si les valeurs de qRes sont positives, on renvoie le q de rungeKutta en sortant
 	// si l'une des valeurs de retour qRes est < (-precision) on reprend le pas precedent positif avec un calcul � ds/2.

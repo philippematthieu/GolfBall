@@ -92,12 +92,12 @@ private :
 	int					numEqns;			// nombre d'equations
 	double				timeMax;			// temps max de l'ODE
 	double				dt;					// pas de temps
-	EquationODEFlight	eqnVolBalle;
+	EquationODEFlight	*eqnVolBalle;
 	SolverODE			solveFlight;
 	SolverODE			solveRoll;
-	EquationODERoll		eqnRoulBalle;
-	EquationODEEventFlight 	eventFlight;
-	EquationODEEventRoll 	eventRoll;
+	EquationODERoll		*eqnRoulBalle;
+	EquationODEEventFlight 	*eventFlight;
+	EquationODEEventRoll 	*eventRoll;
 	double				alphaClubPath;
 	double 				verticalLand;
 	std::vector<double> paramEqn;// wx, wy,wz, getRayon, getRhoAir, getBallArea, getCl1, getMasse, getG

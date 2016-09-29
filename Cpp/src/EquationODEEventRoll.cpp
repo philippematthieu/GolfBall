@@ -13,8 +13,7 @@ using namespace std;
 EquationODEEventRoll::EquationODEEventRoll() {
 }
 
-EquationODEEventRoll::EquationODEEventRoll(std::vector<double> pParametres): qRes(6,0){
-	parametres = pParametres;
+EquationODEEventRoll::EquationODEEventRoll(std::vector<double> pParametres):  EquationODE(pParametres), qRes(6,0){
 }
 
 EquationODEEventRoll::~EquationODEEventRoll() {

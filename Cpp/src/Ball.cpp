@@ -80,14 +80,14 @@ Ball::Ball(string pMarque, int pNbAlveoles, int pNbPieces, Club pGolfClub, doubl
 	cout << "paramEqn Size: " << paramEqn.size() << endl;
 
 	// declaration des instances pour le vol de la balle
-	eqnVolBalle	= EquationODEFlight(paramEqn);
-	eventFlight = EquationODEEventFlight(paramEqn);
-	solveFlight = SolverODE(&eqnVolBalle, 0.0, getdt(), v0Initms);
+	eqnVolBalle	= new EquationODEFlight(paramEqn);
+	eventFlight = new EquationODEEventFlight(paramEqn);
+	solveFlight = SolverODE(eqnVolBalle, 0.0, getdt(), v0Initms);
 
 	// declaration des instances de roullage de la balle
-	eqnRoulBalle= EquationODERoll(paramEqn);
-	eventRoll	= EquationODEEventRoll(paramEqn);
-	solveRoll 	= SolverODE(&eqnRoulBalle, 0.0, getdt(), v0Initms);
+	eqnRoulBalle= new EquationODERoll(paramEqn);
+	eventRoll	= new EquationODEEventRoll(paramEqn);
+	solveRoll 	= SolverODE(eqnRoulBalle, 0.0, getdt(), v0Initms);
 
 	unsigned i=0;
 	cout << "getV0Initms: "  << v0Initms[0] << " ; " <<3.6* v0Initms[1]   << " ; " << v0Initms[2]   << " ; " << 3.6*v0Initms[3]   << " ; " << v0Initms[4] <<" ; " << 3.6*v0Initms[5]   << endl;
@@ -252,7 +252,7 @@ void Ball::runSimu() {
 		 * Calcul de Runge ZeroCrossingODE
 		 */
 		while ( (solveFlight.getCurrentS() < getTimeMax()) && (! solveFlight.getZeroCrossing()) )  {
-			solveFlight.zeroCrossing(&eventFlight, -1e-2); // si aucun zero-crossing et temps < temps max, alors on continue, sinon on boucle pour trouver un pas de calcul au dessus du zero-crossing.
+			solveFlight.zeroCrossing(eventFlight, -1e-2); // si aucun zero-crossing et temps < temps max, alors on continue, sinon on boucle pour trouver un pas de calcul au dessus du zero-crossing.
 			matrice.push_back(solveFlight.getAllQ());
 		}
 		solveFlight.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
@@ -315,7 +315,7 @@ void Ball::runSimu() {
 	 *  Resolution du roullage avec nouvelle equation
 	 *  @param : longueur Vx = getQ(1), lageur Vy = getQ(3), hauteur Vz = getQ(5),
 	 */
-	eqnRoulBalle.setParamEq(getRhoG(), 4);	// positionne le parametre de densite de green.
+	eqnRoulBalle->setParamEq(getRhoG(), 4);	// positionne le parametre de densite de green.
 
 	solveRoll.setQ(solveFlight.getQ(0), 0); 	// initialisation des positions vitesse au sol pour le roulage
 	solveRoll.setQ(solveFlight.getQ(1), 1);
@@ -326,11 +326,11 @@ void Ball::runSimu() {
 	/**
 	 * Calcul de Runge Kutta
 	 */
-	while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
-		solveRoll.zeroCrossing(&eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
-		// mise a jour des donnees courrantes
-		matrice.push_back(solveRoll.getAllQ());
-	}
+	//while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
+	//	solveRoll.zeroCrossing(eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
+	//	// mise a jour des donnees courrantes
+	//	matrice.push_back(solveRoll.getAllQ());
+	//}
 	solveRoll.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
 	/**
 	 * fin du roullage

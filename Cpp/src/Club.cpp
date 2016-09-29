@@ -17,7 +17,7 @@ Club::Club(const std::string pType, double pPoids, double pTemperature, double p
 		double pCoeffSpinLift, double pCl1, double pClubV0, double pAlphaClubPath, double pGamaFacePath,
 		double pShaftLeanImp):
 		Type(pType), Poids(pPoids), temperature(pTemperature), Loft(pLoft), Ecoeff(pEcoeff), CoeffBackSpin(pCoeffBackSpin), CoeffSpinLift(pCoeffSpinLift),
-		Cl1(pCl1), clubV0kmh(pClubV0), alphaClubPath(pAlphaClubPath*M_PI/180.0), gamaFacePath(pGamaFacePath*M_PI/180.0), shaftLeanImp(pShaftLeanImp) {}
+		Cl1(pCl1), clubV0kmh(pClubV0), alphaClubPath(pAlphaClubPath*M_PI/180.0), gamaFacePath(pGamaFacePath*M_PI/180.0), shaftLeanImp(pShaftLeanImp),miss(0) {}
 Club::~Club() {
 }
 

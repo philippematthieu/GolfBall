@@ -9,7 +9,7 @@
 #ifndef EQUATIONODEEVENTFLIGHT_H_
 #define EQUATIONODEEVENTFLIGHT_H_
 
-class EquationODEEventFlight  : public EquationODE {
+class EquationODEEventFlight  : virtual public EquationODE {
 public:
 	EquationODEEventFlight();
 	EquationODEEventFlight(std::vector<double> pParametres);

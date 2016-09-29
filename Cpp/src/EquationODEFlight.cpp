@@ -11,8 +11,7 @@
 EquationODEFlight::EquationODEFlight(){
 }
 
-EquationODEFlight::EquationODEFlight(std::vector<double> pParametres) {
-	parametres = pParametres;
+EquationODEFlight::EquationODEFlight(std::vector<double> pParametres):  EquationODE(pParametres){
 }
 
 EquationODEFlight::~EquationODEFlight(){

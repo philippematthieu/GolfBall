@@ -6,6 +6,7 @@
  */
 
 #include "EquationODEEventFlight.h"
+#include "EquationODE.h"
 #include <vector>
 
 using namespace std;
@@ -13,8 +14,7 @@ using namespace std;
 EquationODEEventFlight::EquationODEEventFlight(){
 }
 
-EquationODEEventFlight::EquationODEEventFlight(std::vector<double> pParametres): qRes(6,0) {
-	parametres = pParametres;
+EquationODEEventFlight::EquationODEEventFlight(std::vector<double> pParametres): EquationODE(pParametres),qRes(6,0) {
 }
 
 EquationODEEventFlight::~EquationODEEventFlight() {

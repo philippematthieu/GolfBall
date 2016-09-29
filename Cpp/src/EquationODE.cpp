@@ -15,6 +15,7 @@ EquationODE::EquationODE(){
 }
 
 EquationODE::EquationODE(std::vector<double> pParametres){
+	parametres.resize(pParametres.size());
 	parametres = pParametres;
 }
 
