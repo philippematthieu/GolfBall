@@ -9,6 +9,8 @@
 #include "EquationODE.h"
 #include <vector>
 
+using namespace std;
+
 SolverODE::SolverODE() {
 }
 SolverODE::SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double> pq):  sCurrent(ps), ds(pds), q(pq) ,numEqns(pq.size()) {
@@ -119,7 +121,7 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 	std::vector<double> qOrg(numEqns);	// parametres depedants
 	std::vector<double> qRes(numEqns);	// parametres depedants
 	bool iter	= 		true;
-
+	double comp;
 	// initialisation a la valeur avant calcul
 	sCurrentOrg = 		getCurrentS();
 	dsOrg 		= 		ds;
@@ -138,12 +140,14 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 		rungeKutta4();
 		qRes = event->getEvaluation(getCurrentS(), getAllQ());
 		iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
-		for (unsigned  i=0; i < qRes.size(); i++)
-			iter = ((qRes[i] < precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing
+		for (unsigned  i=0; i < qRes.size(); i++) {
+			comp = (qRes[i]);
+			iter = ((comp < precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing
+		}
 		ds =ds/2.0;								// on diminue le pas de temps
 	}
 	ds = dsOrg;									// on reprend le pas de temps intiale
 	bzeroCrossing = true;
 	for (unsigned  i=0; i < qRes.size(); i++)
-		bzeroCrossing = (((precision <= qRes[i]) && (qRes[i] <= 0)) && bzeroCrossing); // si l'un des q n'est pas dans le range entre (-precision) < qRes < 0, pas de zero crossing
+		bzeroCrossing = (((precision <= qRes[i]) && (qRes[i] <= 0.0)) && bzeroCrossing); // si l'un des q n'est pas dans le range entre (-precision) < qRes < 0, pas de zero crossing
 }

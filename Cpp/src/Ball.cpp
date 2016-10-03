@@ -301,9 +301,12 @@ void Ball::runSimu() {
 		solveFlight.setQ(vrz, 5);
 		solveFlight.setQ(0, 4);							// La nouvelle position de la hauteur est 0
 		// mise a jour du spin
-		solveFlight.getEquationODE()->setParamEq(0,0);	// wx et le this.SpinX
-		solveFlight.getEquationODE()->setParamEq(wr,1);	// wy et le this.SpinY
-		solveFlight.getEquationODE()->setParamEq(0,2);	// wz et le this.SpinZ
+		(solveFlight.getEquationODE())->setParamEq(0,0);	// wx et le this.SpinX dans les parametres d'equation
+		(solveFlight.getEquationODE())->setParamEq(wr,1);	// wy et le this.SpinY dans les parametres d'equation
+		(solveFlight.getEquationODE())->setParamEq(0,2);	// wz et le this.SpinZ dans les parametres d'equation
+		setSpinX(0);	// wx et le this.SpinX
+		setSpinY(wr);	// wy et le this.SpinY
+		setSpinZ(0);	// wz et le this.SpinZ
 		// enregistrement du point de chutte
 		if (i == 0) {
 			indexChute = matrice.size();
@@ -326,11 +329,11 @@ void Ball::runSimu() {
 	/**
 	 * Calcul de Runge Kutta
 	 */
-	//while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
-	//	solveRoll.zeroCrossing(eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
-	//	// mise a jour des donnees courrantes
-	//	matrice.push_back(solveRoll.getAllQ());
-	//}
+	while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
+		solveRoll.zeroCrossing(eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
+		// mise a jour des donnees courrantes
+		matrice.push_back(solveRoll.getAllQ());
+	}
 	solveRoll.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
 	/**
 	 * fin du roullage
