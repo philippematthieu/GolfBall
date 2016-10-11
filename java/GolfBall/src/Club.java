@@ -10,7 +10,7 @@ public class Club {
 	private double CoeffBackSpin;
 	private double CoeffSpinLift;
 	private double Cl1;					// A new aerodynamic model of a golf ball in flight (1994); Alexander J Smits
-	private double alphaClubPath;		// angle du chemin de club à l'impact
+	private double alphaClubPath;		// angle du chemin de club a l'impact
 	private double gamaFacePath;		// angle de la tete de club a l'impact
 	private double shaftLeanImp;			// angle du shaft a l'impact en degre
 	private double clubV0kmh;			// vitesse en km/h dde la tete de club
@@ -85,11 +85,11 @@ public class Club {
 	public void setLoftDegre(double pLoft) {
 		Loft = pLoft;
 	}
-	public double getDynamiqueLoft() {
+	public double getDynamiqueLoftRadian() {
 		return (getLoft() + getShaftLeanImp())*Math.PI/180;
 	}
 	public double getDynamiqueLoftDegre() {
-		return getDynamiqueLoft()*180/Math.PI;
+		return getDynamiqueLoftRadian()*180/Math.PI;
 	}
 	public void setShafLeanImpDegre(double pShafLeanImp) {
 		shaftLeanImp = pShafLeanImp;
@@ -112,18 +112,19 @@ public class Club {
 	public double getMiss() {
 		return miss;
 	}
-	public double getGamaFacePath() {
+	public double getGamaFacePathRadian() {
 		return gamaFacePath;
 	}
 	public void setGamaFacePathDegre(double pGamaFacePath) {
-		gamaFacePath = getGamaFacePath()*Math.PI/180;
+		gamaFacePath = pGamaFacePath*Math.PI/180;
 	}
-	public double getAlphaClubPath() {
+	public double getAlphaClubPathRadian() {
 		return alphaClubPath;
 	}
 	public void setAlphaClubPathDegre(double pAlphaClubPath) {
 		alphaClubPath = pAlphaClubPath*Math.PI/180;
 	}
 } // fin public class GolfClub
+
 
 

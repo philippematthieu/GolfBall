@@ -11,7 +11,9 @@ public class EquationODEEventFlight  extends EquationODE {
 	public EquationODEEventFlight(double pParametres[]) {
 		super(pParametres);
 	}
-
+	/**
+	 * 
+	 */
 	public double[] getEvaluation(double s, double q[] ){
 		double qRes[] 	= new double[q.length];
 		

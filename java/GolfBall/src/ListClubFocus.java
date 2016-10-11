@@ -32,7 +32,7 @@ public class ListClubFocus implements FocusListener {
 		//  mise à jour du V0 Club du club depuis la fenetre de saisie
 		this.fenetre.getClub().setClubV0Kmh(Double.parseDouble(this.fenetre.getClubV0Field()));
 		//  mise à jour du ShaftLean Club du club depuis la fenetre de saisie
-		this.fenetre.getClub().setShafLeanImpDegre(Double.parseDouble(this.fenetre.getShafLeanImpField()));
+		this.fenetre.getClub().setShafLeanImpDegre(Double.parseDouble(this.fenetre.getShaftLeanImpField()));
 	}
 
 }

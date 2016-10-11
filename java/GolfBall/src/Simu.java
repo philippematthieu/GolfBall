@@ -1,7 +1,6 @@
 import java.util.Locale;
 
 /**
- * 
  * Simulates a flight of a golf ball, shot with a golf club.</br></br>
  * <B>Bibliographie :</B>
  * <OL>
@@ -130,7 +129,7 @@ public class Simu {
 		Club[] sac = new Club[13];
 		Locale.setDefault(new Locale("en", "US")); // force le passage a un "." comme separateur de decimale au lieu de ","
 		//				   Type,  Poids , temp, Loft , Ecoeff, CoeffBackSpin,	CoeffSpinLift, 	Cl1,  	pClubV0, pAlphaClubPath, 	pGamaFacePath,	pShafLeanImp
-		sac[0]  = new Club("Dr",  0.300 , 20.0, 11   , 0.738,  200.00 , 		1500.0 , 		0.64, 	170.6, 	 0.0,		 		0.0,			 6.0);
+		sac[0]  = new Club("Dr",  0.300 , 20.0, 11   , 0.738,  200.00 , 		1500.0 , 		0.64, 	170.6, 	 -8.0,				2.0,			6.0);
 		sac[1]  = new Club("B5",  0.280 , 20.0, 18   , 0.78 ,  281.64 , 		500.0 , 		0.65, 	151.6, 	 5.0,	 			-5.0,			-3.0);
 		sac[2]  = new Club("H3",  0.250 , 20.0, 18   , 0.80 ,  322.00 , 		500.0 , 		0.54, 	136.8, 	 0.0,	 			0.0,			-2.5);
 		sac[3]  = new Club("F5",  0.200 , 20.0, 23   , 0.85 ,  335.00 , 		420.0 , 		0.54, 	127.1, 	 0.0,	 			0.0,			-5.0);
@@ -140,13 +139,14 @@ public class Simu {
 		sac[7]  = new Club("F9",  0.200 , 20.0, 39   , 0.83 ,  400.99 , 		308.0 , 		0.53, 	115.9, 	 0.0,	 			0.0,			-8.0);
 		sac[8]  = new Club("PW",  0.200 , 20.0, 44   , 0.78 ,  438.24 , 		280.0 , 		0.52,	112.7, 	 0.0,	 			0.0,			-12.0);
 		sac[9]  = new Club("AW",  0.200 , 20.0, 52   , 0.78 ,  470.09 , 		308.0 , 		0.52, 	112.7, 	 0.0,	 			0.0,			-17.0);
-		sac[10] = new Club("SW",  0.200 , 20.0, 54   , 0.71 ,  520.00 , 		308.0 , 		0.15,	104.6, 	 0.0,	 			0.0,			-15.0);
+		sac[10] = new Club("SW",  0.200 , 20.0, 54   , 0.71 ,  520.00 , 		308.0 , 		0.15,	110.0, 	 0.0,	 			0.0,			-15.0);
 		sac[11] = new Club("LW",  0.200 , 20.0, 60   , 0.40 ,  500.00 , 		308.0 , 		0.15, 	100.0, 	 0.0,	 			-3.0,			-12.0);
 		sac[12] = new Club("Pt",  0.300 , 20.0, 03   , 0.68 ,  550.24 , 		308.0 , 		0.00, 	10.00, 	 0.0,	 			0.0,			 1.0);
+
 		/**
 		 * Lancement de la fenetre de saisie de parametres
 		 */
-		new SaisieData(sac);
+		new SaisieData(sac,10);
 	}
 }
 

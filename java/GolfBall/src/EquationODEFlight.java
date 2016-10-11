@@ -36,7 +36,7 @@ public class EquationODEFlight extends EquationODE {
 		
 		double wx			= getParamEq(0);
 		double wy			= getParamEq(1);
-		double wz			= getParamEq(2);
+		double wz			= getParamEq(2) ;
 		double getRayon		= getParamEq(3);
 		double getRhoAir	= getParamEq(4);
 		double getBallArea	= getParamEq(5);

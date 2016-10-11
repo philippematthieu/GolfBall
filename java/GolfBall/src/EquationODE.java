@@ -5,7 +5,7 @@
  */
 public abstract class EquationODE {
 	
-	private double[] parametres = new double[6];
+	private double[] parametres = new double[9];
 
 	public EquationODE(double pParametres[]) {
 		parametres = pParametres;

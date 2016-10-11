@@ -29,21 +29,21 @@ public class SaisieData extends JFrame  {
 	private JTextField cl1Field;
 	private JTextField alphaClubPathField;
 	private JTextField gamaFacePathField;
-	private JTextField shafLeanImpField;
+	private JTextField shaftLeanImpField;
 	private JTextField temperatureField;
 	private Club club;
 	private JCheckBox boutonCheck;
-	
-	public SaisieData(Club[] pSac){
+
+	public SaisieData(Club[] pSac, int indiceDefaut){
 		super("Simu");
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(13,2));
 		sac 	= pSac;
-		club 	= sac[0]; // initialisation avec le driver
+		club 	= sac[indiceDefaut]; // initialisation avec le club par défaut
 
 		// creation des champs
-		//Type,  Poids , Loft , Ecoeff, CoeffBackSpin,	CoeffSpinLift, 	Cl1,  	pClubV0, pAlphaClubPath, 	pGamaFacePath,	pShafLeanImp
+		//Type,  Poids , Loft , Ecoeff, CoeffBackSpin,	CoeffSpinLift, 	Cl1,  	pClubV0, pAlphaClubPath, 	pGamaFacePath,	pShaftLeanImp
 		JLabel clubText 					= new JLabel("Club");
 		JLabel poidsText 					= new JLabel("Poids (kg)");
 		JLabel temperatureText 				= new JLabel("Temperatuer (°C)");
@@ -55,56 +55,67 @@ public class SaisieData extends JFrame  {
 		JLabel vClubText 					= new JLabel("Vitesse Club (km/h)");
 		JLabel clubPathText 				= new JLabel("Alpha ClubPath (°)");
 		JLabel gamaPathText 				= new JLabel("Gama FacePath (°)");
-		JLabel shaftLeanText 				= new JLabel("ShafLean Imp (°)");
+		JLabel shaftLeanText 				= new JLabel("ShaftLean Imp (°)");
 		JButton boutonRun;
-		
+
 		listClub 		= new JComboBox<Object>();
 		listClub.addActionListener(new ListClubAction(this,"List"));
 		listClub.addFocusListener(new ListClubFocus(this));
 
-		poidsField				= new JTextField(Double.toString(sac[0].getPoids()));
+		poidsField				= new JTextField(Double.toString(club.getPoids()));
 		poidsField.addActionListener(new PoidsAction(this,"Poids"));
 		poidsField.addFocusListener(new PoidsFocus(this));
+		setPoidsField(Double.toString(club.getPoids()));
 
 		temperatureField				= new JTextField(Double.toString(20.0));
 		temperatureField.addActionListener(new TemperatureAction(this,"Poids"));
 		temperatureField.addFocusListener(new TemperatureFocus(this));
+		setTemperatureField(Double.toString(club.getTemperature()));
 
-		loftField 				= new JTextField(Double.toString(sac[0].getLoft()));
+		loftField 				= new JTextField(Double.toString(club.getLoft()));
 		loftField.addActionListener(new LoftAction(this,"Loft"));
 		loftField.addFocusListener(new LoftFocus(this));
+		setLoftField(Double.toString(club.getLoft()));
 
-		ecoeffField 			= new JTextField(Double.toString(sac[0].getEcoeff()));
+		ecoeffField 			= new JTextField(Double.toString(club.getEcoeff()));
 		ecoeffField.addActionListener(new ECoeffAction(this,"ECoeff"));
 		ecoeffField.addFocusListener(new ECoeffFocus(this));
+		setECoeffField(Double.toString(club.getEcoeff()));
 
-		coeffBackSpinField 		= new JTextField(Double.toString(sac[0].getCoeffBackSpin()));
+		coeffBackSpinField 		= new JTextField(Double.toString(club.getCoeffBackSpin()));
 		coeffBackSpinField.addActionListener(new CoeffBackSpinAction(this,"BackSpin"));
 		coeffBackSpinField.addFocusListener(new CoeffBackSpinFocus(this));
+		setCoeffBackSpinField(Double.toString(club.getCoeffBackSpin()));
 
-		coeffSpinLiftField 		= new JTextField(Double.toString(sac[0].getCoeffSpinLift()));
+		coeffSpinLiftField 		= new JTextField(Double.toString(club.getCoeffSpinLift()));
 		coeffSpinLiftField.addActionListener(new CoeffSpinLiftAction(this,"Lift"));
 		coeffSpinLiftField.addFocusListener(new CoeffSpinLiftFocus(this));
+		setCoeffSpinLiftField(Double.toString(club.getCoeffSpinLift()));
 
-		cl1Field 				= new JTextField(Double.toString(sac[0].getCl1()));
+		cl1Field 				= new JTextField(Double.toString(club.getCl1()));
 		cl1Field.addActionListener(new Cl1Action(this,"CL1"));
 		cl1Field.addFocusListener(new Cl1Focus(this));
+		setCl1Field(Double.toString(club.getCl1()));
 
-		clubFieldV0 			= new JTextField(Double.toString(sac[0].getClubV0ms()*3.6));
+		clubFieldV0 			= new JTextField(Double.toString(club.getClubV0ms()*3.6));
 		clubFieldV0.addActionListener(new ClubVAction(this,"V0Club"));
 		clubFieldV0.addFocusListener(new ClubVFocus(this));
+		setClubV0Field(Double.toString(club.getClubV0ms()*3.6));
 
-		alphaClubPathField 		= new JTextField(Double.toString(sac[0].getAlphaClubPath()));
+		alphaClubPathField 		= new JTextField(Double.toString(club.getAlphaClubPathRadian()*180/Math.PI));
 		alphaClubPathField.addActionListener(new AlphaClubPathAction(this,"Alpha"));
 		alphaClubPathField.addFocusListener(new AlphaClubPathFocus(this));
+		setAlphaClubPathField(Double.toString(club.getAlphaClubPathRadian()*180/Math.PI));
 
-		gamaFacePathField 		= new JTextField(Double.toString(sac[0].getGamaFacePath()));
+		gamaFacePathField 		= new JTextField(Double.toString(club.getGamaFacePathRadian()*180/Math.PI));
 		gamaFacePathField.addActionListener(new GamaFacePathFieldAction(this,"Gama"));
 		gamaFacePathField.addFocusListener(new GamaFacePathFieldFocus(this));
+		setGamaFacePathField(Double.toString(club.getGamaFacePathRadian()*180/Math.PI));
 
-		shafLeanImpField 		= new JTextField(Double.toString(sac[0].getShaftLeanImp()));
-		shafLeanImpField.addActionListener(new shafLeanImpAction(this,"ShaftLean"));
-		shafLeanImpField.addFocusListener(new shafLeanImpFocus(this));
+		shaftLeanImpField 		= new JTextField(Double.toString(club.getShaftLeanImp()));
+		shaftLeanImpField.addActionListener(new shaftLeanImpAction(this,"ShaftLean"));
+		shaftLeanImpField.addFocusListener(new shaftLeanImpFocus(this));
+		setShaftLeanImpField(Double.toString(club.getShaftLeanImp()));
 
 		boutonRun 		= new JButton( new RunAction(this,"Swing"));
 		boutonCheck 	= new JCheckBox( "Same Frame", false);
@@ -112,6 +123,8 @@ public class SaisieData extends JFrame  {
 		for (Club j : pSac){
 			listClub.addItem(j.getType());
 		}
+		setListClubField(indiceDefaut);
+
 		panel.add(clubText);
 		panel.add(listClub);
 		panel.add(poidsText);
@@ -135,7 +148,7 @@ public class SaisieData extends JFrame  {
 		panel.add(gamaPathText);
 		panel.add(gamaFacePathField);
 		panel.add(shaftLeanText);
-		panel.add(shafLeanImpField);
+		panel.add(shaftLeanImpField);
 		panel.add(boutonRun);
 		panel.add(boutonCheck);
 
@@ -187,6 +200,9 @@ public class SaisieData extends JFrame  {
 	}
 	public String getClubV0Field(){
 		return clubFieldV0.getText();
+	}	
+	public void setClubV0Field(String ClubV0){
+		clubFieldV0.setText(ClubV0);
 	}
 	public int getSelectedIndex(){
 		return listClub.getSelectedIndex();
@@ -200,16 +216,31 @@ public class SaisieData extends JFrame  {
 	public String getAlphaClubPathField(){
 		return alphaClubPathField.getText();
 	}
+	public void setAlphaClubPathField(String alphaClubPath){
+		alphaClubPathField.setText(alphaClubPath);
+	}
 	public String getGamaFacePathField(){
 		return gamaFacePathField.getText();
 	}
-	public String getShafLeanImpField(){
-		return shafLeanImpField.getText();
+	public void setGamaFacePathField(String gamaFacePath){
+		gamaFacePathField.setText(gamaFacePath);
+	}
+	public String getShaftLeanImpField(){
+		return shaftLeanImpField.getText();
+	}	
+	public void setShaftLeanImpField(String shaftLean){
+		shaftLeanImpField.setText(shaftLean);
 	}
 	public String getTemperatureField(){
 		return temperatureField.getText();
+	}		
+	public void setTemperatureField(String Temp){
+		temperatureField.setText(Temp);
 	}	
 	public Boolean getPlotInSameFrame(){
 		return boutonCheck.isSelected();
+	}
+	public void setListClubField(int indice){
+		listClub.setSelectedIndex(indice);
 	}
 }

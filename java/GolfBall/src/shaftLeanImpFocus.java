@@ -2,10 +2,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 
-public class Cl1Focus implements FocusListener {
+public class shaftLeanImpFocus implements FocusListener {
 	private SaisieData fenetre;
 
-	public Cl1Focus(SaisieData saisieData){
+	public shaftLeanImpFocus(SaisieData saisieData){
 		this.fenetre = saisieData;
 	}
 	public void focusGained(FocusEvent e) {
@@ -15,7 +15,7 @@ public class Cl1Focus implements FocusListener {
 		/**
 		 * mise à jour de la donnee du club utilise
 		 */
-		this.fenetre.getClub().setCl1(Double.parseDouble(this.fenetre.getCl1Field()));
+		this.fenetre.getClub().setShafLeanImpDegre(Double.parseDouble(this.fenetre.getShaftLeanImpField()));
 	}
 
 }
