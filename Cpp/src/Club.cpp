@@ -72,9 +72,6 @@ double Club::getDynamiqueLoftRadian() {
 double Club::getDynamiqueLoftDegre() {
 	return getDynamiqueLoftRadian()*180.0/M_PI;
 }
-void Club::setShafLeanImpDegre(double pShafLeanImp) {
-	shaftLeanImp = pShafLeanImp;
-}
 double Club::getShaftLeanImp() {
 	return shaftLeanImp;
 }

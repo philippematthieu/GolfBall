@@ -1,9 +1,9 @@
 /*
- * SolverODE.cpp
- *
- *  Created on: 27 sept. 2016
- *      Author:
- */
+* SolverODE.cpp
+*
+*  Created on: 27 sept. 2016
+*      Author:
+*/
 
 #include "SolverODE.h"
 #include "EquationODE.h"
@@ -16,6 +16,7 @@ SolverODE::SolverODE() {
 SolverODE::SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double> pq):  sCurrent(ps), ds(pds), q(pq) ,numEqns(pq.size()) {
 	eqn = pEqn;
 	bzeroCrossing = false;
+	underMinDs = false;
 }
 
 SolverODE::~SolverODE() {
@@ -23,10 +24,10 @@ SolverODE::~SolverODE() {
 
 // Constructor
 /**
- * @author
- * {@literal} Description : constructeur du solver Runge Kutta
- * @param (String pMarque, int pNbAlveoles, int pNbPieces, double pTemperature, GolfClub pGolfClub, double pdt, double pTimeMax, double pdt)
- */
+* @author
+* {@literal} Description : constructeur du solver Runge Kutta
+* @param (String pMarque, int pNbAlveoles, int pNbPieces, double pTemperature, GolfClub pGolfClub, double pdt, double pTimeMax, double pdt)
+*/
 double SolverODE::getCurrentS() {
 	return sCurrent;
 }
@@ -51,16 +52,22 @@ bool SolverODE::getZeroCrossing() {
 void SolverODE::resetZeroCrossing() {
 	bzeroCrossing = false;
 }
+bool SolverODE::isUnderMinDs() {
+	return underMinDs;
+}	
+void SolverODE::resetUnderMinDs() {
+	underMinDs = false;
+}	
 EquationODE *SolverODE::getEquationODE()	{
-		return eqn;
-	}
+	return eqn;
+}
 void SolverODE::setEquationODE(EquationODE *pEqn) {
 	eqn = pEqn;
-	}
+}
 
 /**
- *  Fourth-order Runge-Kutta ODE solver.
- */
+*  Fourth-order Runge-Kutta ODE solver.
+*/
 void SolverODE::rungeKutta4() {
 	std::vector<double> dqnew(numEqns);
 	int j;
@@ -111,17 +118,17 @@ void SolverODE::rungeKutta4() {
 
 
 /**
- * ZeroCrossing Solver using Runge Kutta.
- * @param event
- * @param precision
- */
-void SolverODE::zeroCrossing(EquationODE *event, double precision) {
+* ZeroCrossing Solver using Runge Kutta.
+* @param event
+* @param precision
+*/
+void SolverODE::zeroCrossing(EquationODE *event, double precision, double minTimeStep) {
 	double 				sCurrentOrg;						// temps intiale
 	double 				dsOrg;							// step temporel
 	std::vector<double> qOrg(numEqns);	// parametres depedants
 	std::vector<double> qRes(numEqns);	// parametres depedants
 	bool iter	= 		true;
-	double comp;
+
 	// initialisation a la valeur avant calcul
 	sCurrentOrg = 		getCurrentS();
 	dsOrg 		= 		ds;
@@ -134,20 +141,27 @@ void SolverODE::zeroCrossing(EquationODE *event, double precision) {
 	// si les valeurs de retour qRes sont comprises entre (-precision) < qRes < 0 on arrete car on a traverse le zero a la precision.
 	iter 			= true;
 	bzeroCrossing 	= false;
+	underMinDs = (ds < minTimeStep);
 	while (iter){ // iteration sur un pas plus petit / 2
 		setAllQ(qOrg); 			// on remet la valeur avant le pas si on itere. Si c'est la premiere iteration, alors les valeurs n'ont pas changees
 		setCurrentS(sCurrentOrg); 				// on remet la valeur avant le pas
 		rungeKutta4();
 		qRes = event->getEvaluation(getCurrentS(), getAllQ());
 		iter 	= false; // pas defaut, il n'y a a pas besoin d'iterer.
+		underMinDs = (ds < minTimeStep); 		// on verifie si le step temporel mini est atteind
 		for (unsigned  i=0; i < qRes.size(); i++) {
-			comp = (qRes[i]);
-			iter = ((comp < precision) || iter);	// si l'une des valeurs est qRes(i) < - precision on reprend le pas positif precedent avec ds/2 (on itere pour trouver le zerocrossing
+			// si qRes[i] != 0 faire
+			if (qRes[i] != 0) {
+				// on cherche si zerocrossing pour iterer sur un pas plus petit ==> 
+				// changement de signe ==> zerorossing = (abs(position(n) - position(n-1)) > abs(abs(position(n)) - abs(position(n-1))))
+				bzeroCrossing = (std::abs(qRes[i] - qOrg[i]) > std::abs(std::abs(qRes[i]) - std::abs(qOrg[i])));
+				iter = (iter || bzeroCrossing ) &&
+					(!underMinDs) &&
+					(std::abs(qRes[i]) > precision );
+			}
 		}
 		ds =ds/2.0;								// on diminue le pas de temps
 	}
+	underMinDs = (ds < minTimeStep);			// on verifie si le pas de temps minimum est franchi
 	ds = dsOrg;									// on reprend le pas de temps intiale
-	bzeroCrossing = true;
-	for (unsigned  i=0; i < qRes.size(); i++)
-		bzeroCrossing = (((precision <= qRes[i]) && (qRes[i] <= 0.0)) && bzeroCrossing); // si l'un des q n'est pas dans le range entre (-precision) < qRes < 0, pas de zero crossing
 }

@@ -1,9 +1,9 @@
 /*
- * SolverODE.h
- *
- *  Created on: 27 sept. 2016
- *      Author:
- */
+* SolverODE.h
+*
+*  Created on: 27 sept. 2016
+*      Author:
+*/
 
 #ifndef SOLVERODE_H_
 #define SOLVERODE_H_
@@ -12,8 +12,8 @@
 
 class SolverODE {
 public:
-						SolverODE();
-						SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double>  pq);
+	SolverODE();
+	SolverODE(EquationODE *pEqn, double ps, double pds, std::vector<double>  pq);
 	virtual 			~SolverODE();
 
 	double 				getCurrentS() ;
@@ -30,8 +30,9 @@ public:
 
 	bool 				getZeroCrossing() ;
 	void 				resetZeroCrossing();
-	void 				zeroCrossing(EquationODE *event, double precision);
-	
+	void 				zeroCrossing(EquationODE *event, double precision, double minTimeStep);
+	bool isUnderMinDs();
+	void resetUnderMinDs();
 	void 				rungeKutta4();
 
 private :
@@ -41,6 +42,7 @@ private :
 	double sCurrent;
 	EquationODE *eqn;
 	bool bzeroCrossing;
+	bool underMinDs;
 };
 
 #endif /* SOLVERODE_H_ */

@@ -251,11 +251,12 @@ void Ball::runSimu() {
 		/**
 		 * Calcul de Runge ZeroCrossingODE
 		 */
-		while ( (solveFlight.getCurrentS() < getTimeMax()) && (! solveFlight.getZeroCrossing()) )  {
-			solveFlight.zeroCrossing(eventFlight, -1e-2); // si aucun zero-crossing et temps < temps max, alors on continue, sinon on boucle pour trouver un pas de calcul au dessus du zero-crossing.
+		while ( (solveFlight.getCurrentS() < getTimeMax()) && (! solveFlight.getZeroCrossing()) && !solveFlight.isUnderMinDs() )  {
+			solveFlight.zeroCrossing(eventFlight, -1e-2, 6e-4); // si aucun zero-crossing et temps < temps max, alors on continue, sinon on boucle pour trouver un pas de calcul au dessus du zero-crossing.
 			matrice.push_back(solveFlight.getAllQ());
 		}
 		solveFlight.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
+		solveFlight.resetUnderMinDs(); // reset du zero crossing pour les boucles suivantes.
 		// sortie de la boucle while
 		/**
 		 *  calcul du vecteur vitesse et spin apres rebond
@@ -329,12 +330,13 @@ void Ball::runSimu() {
 	/**
 	 * Calcul de Runge Kutta
 	 */
-	while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) )  {
-		solveRoll.zeroCrossing(eventRoll, -1e-2); // si pas de zero crossing une iteration, sinon, event est true
+	while ( (solveRoll.getCurrentS() < getTimeMax()) && (! solveRoll.getZeroCrossing()) && !solveFlight.isUnderMinDs() )  {
+		solveRoll.zeroCrossing(eventRoll, -1e-2, 6e-4); // si pas de zero crossing une iteration, sinon, event est true
 		// mise a jour des donnees courrantes
 		matrice.push_back(solveRoll.getAllQ());
 	}
 	solveRoll.resetZeroCrossing(); // reset du zero crossing pour les boucles suivantes.
+	solveFlight.resetUnderMinDs(); // reset du zero crossing pour les boucles suivantes.
 	/**
 	 * fin du roullage
 	 */
@@ -350,11 +352,10 @@ void Ball::runSimu() {
 		setVz(matrice[i][5]);
 		matriceFlight.push_back(getVCurrentms());
 		maxHeight = std::max(maxHeight, matrice[i][4]); // sauvegarde de la hauteur max atteinte
-		cout << " == " << getX() << " ; " << getY() << " ; " <<  getZ()<< endl;
+		cout << getVx() << " ; " << getVy() << " ; " <<  getVz()<< " ; " <<  getX() << " ; " << getY() << " ; " <<  getZ()<< endl;
 	}
 	tempsTotal = solveRoll.getCurrentS() + solveFlight.getCurrentS();
 	cout << "Temps Total : " <<  tempsTotal << endl;
-
 	return;
 }
 /**
