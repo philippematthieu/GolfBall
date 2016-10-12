@@ -3,6 +3,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.Collections;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +18,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 import org.math.plot.Plot3DPanel;
+import org.math.plot.*;
 
 public class GraphXYSeries  extends JFrame {
 	/**
@@ -24,7 +27,9 @@ public class GraphXYSeries  extends JFrame {
 	private XYSeries series = new XYSeries("Hauteur");
 	private XYSeries series2 = new XYSeries("Largeur");
 	final Plot3DPanel	plot3d	 = new Plot3DPanel("SOUTH");
-
+	final Plot2DPanel 	plot2d1 = new Plot2DPanel(); // ajout pour utilisation mathplot
+	final Plot2DPanel 	plot2d2 = new Plot2DPanel(); // ajout pour utilisation mathplot
+	
 	private static final long serialVersionUID = 1L;
 
 	public GraphXYSeries(final String title,String xTitle,String yTitle, Vector<double[]> pMatriceFlight, String pLegend) {
@@ -67,6 +72,15 @@ public class GraphXYSeries  extends JFrame {
 				true,
 				false
 				);
+		
+		plot2d1.addLegend("SOUTH");			 // ajout pour utilisation mathplot
+		plot2d2.addLegend("SOUTH");			 // ajout pour utilisation mathplot
+		plot2d1.addLinePlot("", x, z);// ajout pour utilisation mathplot
+		plot2d2.addLinePlot("", x, y);// ajout pour utilisation mathplot
+		plot2d1.setAxisLabel(0, "Longueur");
+		plot2d1.setAxisLabel(1, "Hauteur");
+		plot2d2.setAxisLabel(0, "Longueur");
+		plot2d2.setAxisLabel(1, "Largeur");
 		final ChartPanel chartPanel  = new ChartPanel(chart);
 		final ChartPanel chartPanel2 = new ChartPanel(chart2);
 
@@ -87,9 +101,11 @@ public class GraphXYSeries  extends JFrame {
 			panel1.add(new JButton(multiTokenizer.nextToken()));
 		}
 
-		panel2.add(chartPanel);
+		// panel2.add(chartPanel);
+		panel2.add(plot2d1);// ajout pour utilisation mathplot
 		panel2.add(plot3d);
-		panel2.add(chartPanel2);
+		// panel2.add(chartPanel2);
+		panel2.add(plot2d2);// ajout pour utilisation mathplot
 		panel2.add(panel1);
 
 		c.gridx = 1;
