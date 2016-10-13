@@ -29,7 +29,7 @@ public class GraphXYSeries  extends JFrame {
 	final Plot3DPanel	plot3d	 = new Plot3DPanel("SOUTH");
 	final Plot2DPanel 	plot2d1 = new Plot2DPanel(); // ajout pour utilisation mathplot
 	final Plot2DPanel 	plot2d2 = new Plot2DPanel(); // ajout pour utilisation mathplot
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public GraphXYSeries(final String title,String xTitle,String yTitle, Vector<double[]> pMatriceFlight, String pLegend) {
@@ -49,7 +49,7 @@ public class GraphXYSeries  extends JFrame {
 			z[i] = (double)j[4];
 			i++;
 		}
-		
+
 		JPanel 		panel1 		= new JPanel();
 		JPanel 		panel2 		= new JPanel();
 		final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -72,7 +72,7 @@ public class GraphXYSeries  extends JFrame {
 				true,
 				false
 				);
-		
+
 		plot2d1.addLegend("SOUTH");			 // ajout pour utilisation mathplot
 		plot2d2.addLegend("SOUTH");			 // ajout pour utilisation mathplot
 		plot2d1.addLinePlot("", x, z);// ajout pour utilisation mathplot
@@ -160,9 +160,28 @@ public class GraphXYSeries  extends JFrame {
 	{
 		this.series2.remove(i);
 	}
-	
-	public void addLinePlot3d(String pLegend, Vector<double[]> pMatriceFlight) {
+
+	public void addLinePlot2d(String pLegend, Vector<double[]> pMatriceFlight) {
+
+		double[] x = new double[pMatriceFlight.size()];
+		double[] y = new double[pMatriceFlight.size()];
+		double[] z = new double[pMatriceFlight.size()];
+		int i = 0;
 		
+		for (double[] j : pMatriceFlight) {
+			x[i] = (double)j[0];
+			y[i] = (double)j[2];
+			z[i] = (double)j[4];
+			i++;
+		}
+
+		plot2d1.addLinePlot("", x, z);// ajout pour utilisation mathplot
+		plot2d2.addLinePlot("", x, y);// ajout pour utilisation mathplot
+
+	}
+
+	public void addLinePlot3d(String pLegend, Vector<double[]> pMatriceFlight) {
+
 		double[] x = new double[pMatriceFlight.size()];
 		double[] y = new double[pMatriceFlight.size()];
 		double[] z = new double[pMatriceFlight.size()];
@@ -173,7 +192,7 @@ public class GraphXYSeries  extends JFrame {
 			z[i] = (double)j[4];
 			i++;
 		}
-		
+
 		double[] min =  new double[3];
 		double[] max =  new double[3];
 		min[1] = y[0];
@@ -189,7 +208,7 @@ public class GraphXYSeries  extends JFrame {
 		max[0] = x[x.length-1] ; // maxX = dernier element
 		min[2] = 0; // minZ
 		min[0] = 0; // minX
-		
+
 		/**
 		 * Afichage de la direction du drapeau
 		 */

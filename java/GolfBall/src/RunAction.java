@@ -47,6 +47,7 @@ public class RunAction extends AbstractAction  {
 		if (this.fenetre.getPlotInSameFrame()){
 			try {
 				graphLongHaut.addLinePlot3d("Ball Flight", matriceFlight) ;
+				graphLongHaut.addLinePlot2d("", matriceFlight);
 			}
 			finally {	
 			}
