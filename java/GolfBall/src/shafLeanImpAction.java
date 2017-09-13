@@ -1,16 +1,16 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class shafLeanImpAction implements ActionListener   {
+public class shaftLeanImpAction implements ActionListener   {
 	private SaisieData fenetre;
 	
-	public shafLeanImpAction(SaisieData saisieData, String texte){
+	public shaftLeanImpAction(SaisieData saisieData, String texte){
 		this.fenetre = saisieData;
 	}
 	public void actionPerformed(ActionEvent e) { 
 		/**
 		 * mise à jour de la donnee du club utilise
 		 */
-		this.fenetre.getClub().setShafLeanImpDegre(Double.parseDouble(this.fenetre.getShafLeanImpField()));
+		this.fenetre.getClub().setShafLeanImpDegre(Double.parseDouble(this.fenetre.getShaftLeanImpField()));
 	}
 }
