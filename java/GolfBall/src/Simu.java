@@ -143,6 +143,74 @@ public class Simu {
 		sac[11] = new Club("LW",  0.200 , 20.0, 60   , 0.40 ,  500.00 , 		308.0 , 		0.15, 	100.0, 	 0.0,	 			-3.0,			-12.0);
 		sac[12] = new Club("Pt",  0.300 , 20.0, 03   , 0.68 ,  550.24 , 		308.0 , 		0.00, 	10.00, 	 0.0,	 			0.0,			 1.0);
 
+		
+		/**
+		 * Lancement de l'enregistrement sonore (pour tests)		
+		 */
+
+	    final long RECORD_TIME = 1000;  // 1/1000s	temps d'enregistrement		
+        final RecordSwing recorder = new RecordSwing(RECORD_TIME);
+        // creates a new thread that waits for a specified
+        // of time before stopping
+        Thread stopper = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(RECORD_TIME);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                recorder.finish();
+            }
+        });
+ 
+        stopper.start();
+ 
+        // start recording
+        recorder.start();
+        recorder.getWavSignal();
+        recorder.finish();
+
+        /**
+         * Unit tests the {@code FFT} class.
+         *
+         * @param args the command-line arguments
+         */
+            int n = 32768;//Integer.parseInt(args[0]);
+            Complex[] x = new Complex[n];
+            FFT maFft = new FFT();
+            
+            // original data
+            for (int i = 0; i < n; i++) {
+                x[i] = new Complex(i, 0);
+                x[i] = new Complex(Math.random(), 0);
+            }
+            maFft.show(x, "x");
+            
+            // FFT of original data
+            Complex[] y = maFft.fft(x);
+            maFft.show(y, "y = fft(x)");
+
+            // take inverse FFT
+            Complex[] z = maFft.ifft(y);
+            maFft.show(z, "z = ifft(y)");
+
+            // circular convolution of x with itself
+            Complex[] c = maFft.cconvolve(x, x);
+            maFft.show(c, "c = cconvolve(x, x)");
+
+            // linear convolution of x with itself
+            Complex[] d = maFft.convolve(x, x);
+            maFft.show(d, "d = convolve(x, x)");
+            Complex[] a = new Complex[5];
+            Complex[] densite = new Complex[a.length];
+            a[0] =  new Complex(1, 3);
+            a[1] =  new Complex(2, 2);
+            a[2] =  new Complex(3, 1);
+            a[3] =  new Complex(3, 1);
+            a[4] =  new Complex(3, 1);
+
+            maFft.show(maFft.density(maFft.fft(x)), "Densité(a)");
+
 		/**
 		 * Lancement de la fenetre de saisie de parametres
 		 */
