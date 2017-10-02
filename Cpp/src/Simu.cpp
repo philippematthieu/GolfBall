@@ -124,7 +124,8 @@
 * @see other http://jmathtools.sourceforge.net/doc/jmathplot/html/classorg_1_1math_1_1plot_1_1PlotPanel.html
 * @param Golf.jar Dr 170.6 0.0 0.0 6.0 20.0
 * @return N/A
-*
+* 
+* parametre de debugage Projet/Propriétés de Golf...Propriétés de configuration/Debogage
 */
 #include <iostream>
 #include <algorithm> // for copy
@@ -135,14 +136,22 @@
 #include "Club.h"
 #include "Ball.h"
 // Include CImg library header.
-#include "..\..\CImg-1.7.8_pre100316\CImg.h"
+#include "CImg.h"
 using namespace cimg_library;
 
+
 using namespace std;
+
+const unsigned char
+    red[]   = { 255,0,0 },
+    green[] = { 0,255,0 },
+    blue [] = { 0,0,255 },
+    black[] = { 0,0,0 };
 
 int main(int argc, char *argv[]) {
 	vector<Club> sac(13);
 	unsigned j=0;
+
 	//Ball theBall;
 	//				Type, Poids, Temp, Loft, Ecoeff, CoeffBackSpin, CoeffSpinLift,		Cl1,	ClubV0, AlphaClubPath,		GamaFacePath,	ShaftLeanImp
 	sac[0]  = Club("Dr",  0.300 , 20.0, 11.0 , 0.738,  200.00 ,			1500.0,			0.64,	170.6,	-8.0,				2.0,			6.0);
@@ -170,6 +179,7 @@ int main(int argc, char *argv[]) {
 				j=i;
 	}
 	// mise à jour des données d club en remplacement de celles par defaut de demo.
+	//Menu Projet/Propriétés de Tests2.. Débugage
 	cout << "setClubV0Kmh: "				 << strtod(argv[2],NULL)		<< endl;
 	sac[j].setClubV0Kmh(			strtod(argv[2],NULL));
 	cout << "setAlphaClubPathDegre: "		 << strtod(argv[3],NULL)		<< endl;
@@ -189,8 +199,46 @@ int main(int argc, char *argv[]) {
 		cout << "getV0Initms: "  << (theBall.getV0Initms())[i]   << endl;
 		cout << "getVCurrentms: "<< (theBall.getVCurrentms())[i] << endl;
 	}
-
 	theBall.runSimu();
+
+	/////////////////////// debut exemple CImage ///////////////////
+	// Read command line argument.
+	cimg_usage("Swing Resultat");
+	const char *const formula = cimg_option("-f","x","Formula to plot");
+	const float x0 = cimg_option("-x0",0.0f,"Minimal X-value");
+	const float x1 = cimg_option("-x1",200.0f,"Maximal X-value");
+	const int resolution = cimg_option("-r",1024,"Plot resolution");
+	const unsigned int nresolution = resolution>1?resolution:1024;
+	const unsigned int plot_type = cimg_option("-p",1,"Plot type");
+	const unsigned int vertex_type = cimg_option("-v",1,"Vertex type");
+
+	// Create plot data pour Longueur / Hauteur.
+	CImg<double> valuesX(4,nresolution,1,1,0);
+	CImg<double> valuesZ(4,nresolution,1,1,0);
+	const unsigned int r = nresolution - 1;
+	std::vector< std::vector<double> > matriceFlight = theBall.getMatriceFlight();
+	// Longueur
+	cimg_forY(valuesX,X) valuesX(0,X) = matriceFlight.at(X)[4];
+	// Largeur
+	cimg_forZ(valuesZ,X) valuesZ(0,X) = matriceFlight.at(X)[2];
+
+	//std::vector<double> v0Currentms;
+	//v0Currentms[0];
+
+	cimg::eval(formula,valuesX).move_to(valuesX);
+	cimg::eval(formula,valuesZ).move_to(valuesZ);
+
+	// Display interactive plot window.
+	valuesX.display_graph(formula,plot_type,vertex_type,"X-axis",x0,x1,"Y-axis");
+	valuesZ.display_graph(formula,plot_type,vertex_type,"X-axis",x0,x1,"Y-axis");
+	/////////////////////// fin exemple CImage ///////////////////
+
+	CImgDisplay draw_disp(500,400,"Color profile of the X-axis",0), draw_disp2(500,400,"Color profile of the Z-axis",0);
+
+	CImg<unsigned char>(draw_disp.width(),	draw_disp.height()).
+		display(draw_disp);
+
+		CImg<unsigned char>(draw_disp2.width(),	draw_disp2.height()).
+		display(draw_disp2);
 	return 0;
 }
-

@@ -75,8 +75,6 @@ public class GraphXYSeries  extends JFrame {
 
 		plot2d1.addLegend("SOUTH");			 // ajout pour utilisation mathplot
 		plot2d2.addLegend("SOUTH");			 // ajout pour utilisation mathplot
-		plot2d1.addLinePlot("", x, z);// ajout pour utilisation mathplot
-		plot2d2.addLinePlot("", x, y);// ajout pour utilisation mathplot
 		plot2d1.setAxisLabel(0, "Longueur");
 		plot2d1.setAxisLabel(1, "Hauteur");
 		plot2d2.setAxisLabel(0, "Longueur");
@@ -128,6 +126,7 @@ public class GraphXYSeries  extends JFrame {
 			this.addSeries2((float)j[0], (float)j[2]);	// Ajoute les nouvelles coordonnees
 		}
 		// add a line plot3d
+		this.addLinePlot2d("Ball Flight", pMatriceFlight);
 		this.addLinePlot3d("Ball Flight", pMatriceFlight);
 		this.setVisible(true);
 
@@ -174,12 +173,14 @@ public class GraphXYSeries  extends JFrame {
 			z[i] = (double)j[4];
 			i++;
 		}
-
 		plot2d1.addLinePlot("", x, z);// ajout pour utilisation mathplot
 		plot2d2.addLinePlot("", x, y);// ajout pour utilisation mathplot
-
 	}
 
+	public void addLinePlot2d(double x[], double y[]) {
+		plot2d2.addLinePlot("", x, y);// ajout pour utilisation mathplot
+	}
+	
 	public void addLinePlot3d(String pLegend, Vector<double[]> pMatriceFlight) {
 
 		double[] x = new double[pMatriceFlight.size()];

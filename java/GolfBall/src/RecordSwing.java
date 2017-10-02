@@ -25,7 +25,7 @@ public class RecordSwing {
 		 */
 		RECORD_TIME = pRECORD_TIME;
 		// path of the wav file
-		wavFile = new File("D:/Users/f009770/Documents/Golf/Radar/RecordAudio.wav");
+		wavFile = new File("C:/Users/matthieu/Desktop/Tiro/RecordAudio.wav");
 		// format of audio file
 		fileType = AudioFileFormat.Type.WAVE;
 		float sampleRate = 44100;

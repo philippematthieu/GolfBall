@@ -352,7 +352,7 @@ void Ball::runSimu() {
 		setVz(matrice[i][5]);
 		matriceFlight.push_back(getVCurrentms());
 		maxHeight = std::max(maxHeight, matrice[i][4]); // sauvegarde de la hauteur max atteinte
-		cout << getVx() << " ; " << getVy() << " ; " <<  getVz()<< " ; " <<  getX() << " ; " << getY() << " ; " <<  getZ()<< endl;
+		//cout << getVx() << " ; " << getVy() << " ; " <<  getVz()<< " ; " <<  getX() << " ; " << getY() << " ; " <<  getZ()<< endl;
 	}
 	tempsTotal = solveRoll.getCurrentS() + solveFlight.getCurrentS();
 	cout << "Temps Total : " <<  tempsTotal << endl;

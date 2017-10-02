@@ -226,17 +226,37 @@ public class FFT {
     /**
      * Returns .
      *
-     * @param  x one complex array from FFT
-     * @param  y the other complex array
-     * @return the linear product x*conjugate(x)
+     * @param  input param ff_x one complex array from FFT of  x
+     * @param  output param y the other complex array
+     * @return the linear product fft_x*conjugate(ff_x)
      * @throws 
      */
     public Complex[] density(Complex[] x) {
-        Complex[] densite = new Complex[x.length];
-        for (int i = 0; i < x.length; i++) {
-        	densite[i] = x[i].times(x[i].conjugate());
+    	Complex[] fft_x = new Complex[x.length];
+    	fft_x = fft(x);
+        Complex[] densite = new Complex[fft_x.length];
+        for (int i = 0; i < fft_x.length; i++) {
+        	densite[i] = (fft_x[i].times(fft_x[i].conjugate()));
         }
         return densite;
+    }
+
+    /**
+     * Returns .
+     *
+     * @param  input param ff_x one complex array from FFT of  x
+     * @param  output param y the real part of the complex array
+     * @return the linear product fft_x*conjugate(ff_x)
+     * @throws 
+     */
+    public double[] densityRe(Complex[] x) {
+        double[] densiteRe = new double[x.length];
+        Complex[] densite = new Complex[x.length];
+        densite = density(x);
+        for (int i = 0; i < densite.length; i++) {
+        	densiteRe[i] = Math.abs(densite[i].re());
+        }
+        return densiteRe;
     }
 
     /**
