@@ -13,10 +13,10 @@ function Sac = GetSac()
     Type            = ['D'      ;'W5'     ;'H3'    ;'5'      ;'6'     ;'7'     ;'8'      ;'9'    ;'PW'     ;'AW'    ;'SW'      ;'LW'   ;'PU'   ]; 
     Loft            = [11       ;18       ;18      ;23       ;26      ;30      ;34.5     ;39     ;44       ;52      ;54        ;60     ;3      ]; 
     Poids           = [0.300    ;0.250    ;0.250   ;0.200    ;0.200   ;0.200   ;0.200    ;0.200  ;0.200    ;0.200   ;0.200     ;0.200  ;0.300  ]; 
-    ecoeff          = [.83      ;0.78     ;0.76    ;0.87     ; 0.83   ;.83   ;0.7      ;0.6    ;0.78     ;0.68    ;0.68      ;.4     ;0.68   ];   // Smash Factor mais plus conplexe (voir formule qui prend en compte m M et miss ) Augmentation = Vitesse Ball plus mportante
-    coeffSpin       = [180      ;280.6435 ;250.000 ;300.0000 ;240     ;375     ;300.7425 ;400.99 ;501.2375 ;441.089 ;452.51722 ;500    ;501.2375 ];   // Capacite du club a addherer et fournir du backspin. dependant des marques de clubs. diminution = moins haut et un choui moins loin
-    coeffSpinLift   = [500      ;500      ;500     ;420      ;420     ;420     ;420      ;308    ;308      ;308     ;308       ;308    ;308]           // Capacite du club a addherer et fournir du liftspin. dependant des marques de clubs. diminu = moins latérale 
-    Cl1             = [0.64     ;0.65     ;0.54    ;0.54     ;0.83    ;0.54    ;0.53     ;0.53   ;0.52     ;0.52    ;0.51      ;0.51   ;0];   // coefficent de proportionnalite ,diminu = moins haut et moins 
+    ecoeff          = [.83      ;0.78     ;0.76    ;0.87     ; 0.84   ;0.68    ;0.7      ;0.6    ;0.78     ;0.68    ;0.68      ;.4     ;0.68   ];   // Smash Factor mais plus conplexe (voir formule qui prend en compte m M et miss ) Augmentation = Vitesse Ball plus mportante
+    coeffSpin       = [180      ;280.6435 ;250.000 ;300.0000 ;240     ;400     ;300.7425 ;400.99 ;501.2375 ;441.089 ;452.51722 ;500    ;501.2375 ];   // Capacite du club a addherer et fournir du backspin. dependant des marques de clubs. diminution = moins haut et un choui moins loin
+    coeffSpinLift   = [500      ;500      ;500     ;420      ;420     ;580     ;420      ;308    ;308      ;308     ;308       ;308    ;308]           // Capacite du club a addherer et fournir du liftspin. dependant des marques de clubs. diminu = moins latérale 
+    Cl1             = [0.64     ;0.65     ;0.54    ;0.54     ;0.83    ;0.42    ;0.53     ;0.53   ;0.52     ;0.52    ;0.51      ;0.51   ;0];   // coefficent de proportionnalite ,diminu = moins haut et moins 
     Cm              = [4.3e-2   ;2.8e-2   ; 2.6e-2 ;1.8e-2   ; 1.6e-2 ;1.1e-2   ;1.1e-2  ;0.9e-2 ;0.62e-2  ;0.5e-2  ;0.45e-2   ;0.4e-2 ;0.0e-2 ];   // coefficent de proportionnalite ,diminu = moins haut et moins     
     Sac             = struct('Type', Type, 'Loft' ,Loft  ,'Poids',Poids, 'ecoeff',ecoeff,'coeffSpin',coeffSpin,'Cm',Cm,'Cl1',Cl1,'coeffSpinLift',coeffSpinLift); 
 endfunction
@@ -81,7 +81,7 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
     // somme des coups xx = [x9+ones(size(x9,1),1)*xd($,:)]; xx = [xd; xx];
     // [t,xd] = Golfball(18.3,141,'D',-0,-2,0,0); [t,x7] = Golfball(18.3,121,'7',-4,1,0,0);[t,xlw] = Golfball(18.3,50.9,'LW',3,-1,0,0); [t,xp] = Golfball(18.3,10.9,'PU',0,0,0,0); 
     // figure; xx = [xp+ones(size(xp,1),1)*xlw($,:)]; xx = [xlw; xx]; xx = [xx+ones(size(xx,1),1)*x7($,:)]; xx = [x7; xx]; xx = [xx+ones(size(xx,1),1)*xd($,:)]; xx = [xd; xx]; 
-    // param3d(xx(:,1),xx(:,5),xx(:,3),'foreground',23); e=gce(); e.foreground = color('red'); e.mark_style = 0;  e.thickness = 2; a = gca(); a.data_bounds =[ 0 , 500 ,-70, 70 , 0, 70];
+    // param3d(VOL(:,1),VOL(:,5),VOL(:,3),'foreground',23); e=gce(); e.foreground = color('red'); e.mark_style = 0;  e.thickness = 2; a = gca(); a.data_bounds =[ 0 , 500 ,-70, 70 , 0, 70];
     //
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -140,6 +140,8 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
     //
     // dPhi = Phi(Fd1) - Phi(Fd2) = 2*%pi*sin(alpha)*D*Ftx/C
     //
+    //    Ke = (1 + Sac.ecoeff(Sac.Type == '7'))/(1+m/Sac.Poids(Sac.Type == '7'));
+    //    Kp = 1/(1+m/Sac.Poids(Sac.Type == '7') + 5/2);
     
     Sac = GetSac();
     TabBallSpeed    = [223.7    ; 205     ; 197.9 ; 180.3    ; 175.4  ; 167.4   ; 160.9  ; 149.7 ; 138.4   ; 111    ; 108.7    ; 104   ; 10]*1000/3600; // en m/s
@@ -167,7 +169,9 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
     V0Ballbfnms     = V0Clubms * cos(thetaLoft)*(1+e)/(1+m/M) ;     // Vitesse longitudinale dans le referentiel de decollage après impact (ref: The physics of golf: The optimum loft of a driverA. Raymond Penner)
     V0Ballbfpms     = -V0Clubms * sin(thetaLoft)/(1+m/M + 5/2);     // Vitesse perpendiculaire dans le referentiel de decollage après impact
     V0Ballms        = sqrt(V0Ballbfnms^2 + V0Ballbfpms^2)* (1 - 0.3556*miss); // Vitesse de decollage de la balle
-    Psi             = thetaLoft + atan(V0Ballbfpms/V0Ballbfnms);    // angle de decollage de la balle
+    //    Ke = (1 + e)/(1+m/M);
+    //    Kp = 1/(1+m/M + 5/2);    
+    Psi             = thetaLoft + atan((V0Ballbfpms/V0Ballbfnms));    // angle de decollage de la balle
     LaunchAngle     = Psi;
     LaunchAngledeg  = LaunchAngle*180/%pi;                          // en radian
     V0Ballkmh       = V0Ballms * 3600/1000; 
@@ -176,18 +180,18 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
 
     //% %%%%%%%%%%%%%%%%%%%%%%%%%
     // Vecteur Vitesse initiale de la balle sur les 3 Axes
-    V0initms(2) = V0Ballms*cos(LaunchAngle)*cos(0);            // Vx
-    V0initms(4) = V0Ballms*sin(LaunchAngle);                   // Vy
-    V0initms(6) = -V0Ballms*cos(LaunchAngle)*sin(0);           // Vz 
+    V0initms(2) = V0Ballms*cos(LaunchAngle)*cos(0);            // Vx : vitesse sur la longueur
+    V0initms(4) = V0Ballms*sin(LaunchAngle);                   // Vy : vitesse de la hauteur
+    V0initms(6) = -V0Ballms*cos(LaunchAngle)*sin(0);           // Vz : vitesse latérale
     V0initms(3) = 0;// hauteur initiale
     //% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // reecriture de Vinitms pour prendre en compte l'angle club path pour dessiner le vecteur correspondant.
     // Le club path ne doit pas influencer sur le modèle. C'est une rotation du plan de tir.
     // je modélise et calcule sans club path pour ne pas intégrer cet angle,
     // puis applique l'angle pour réaliser une rotation du referentiel
-    V0initmsPlot(2) = V0Ballms*cos(LaunchAngle)*cos(alphaClubPath);// Vx
-    V0initmsPlot(4) = V0Ballms*sin(LaunchAngle);                   // Vy
-    V0initmsPlot(6) = -V0Ballms*cos(LaunchAngle)*sin(alphaClubPath);// Vz alpha Chemin de club non vers la cible !!
+    V0initmsPlot(2) = V0Ballms*cos(LaunchAngle)*cos(alphaClubPath);// Vx : 
+    V0initmsPlot(4) = V0Ballms*sin(LaunchAngle);                   // Vy :  
+    V0initmsPlot(6) = -V0Ballms*cos(LaunchAngle)*sin(alphaClubPath);// Vz :  alpha Chemin de club non vers la cible !!
      
     //% %%%%%%%%%%%%%%%%%%%%%%%%%
     // Vecteur représentant la face de Club à dessiner
@@ -197,9 +201,9 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
      
     //% %%%%%%%%%%%%%%%%%%%%%%%%
     // Calcul des SPIN
-    SpinX = 0;//V0initms(6) * Sac.coeffSpinLift(Type == Club) * sin(gamaFacePath);// Le SPIN sur l'axe X n'est pas une composante dans l'axe du chemin de club. Le spin est appliqué sur le plan du sol
-    SpinY = V0initms(4) * sin(gamaFacePath)* Sac.coeffSpinLift(Sac.Type == Club) ;// 
-    SpinZ = V0initms(2) * sin(thetaLoft)   * Sac.coeffSpin(Sac.Type == Club);// 
+    SpinX = 0;//V0initms(6) * Sac.coeffSpinLift(Type == Club) * sin(gamaFacePath);//  Le SPIN sur l'axe X n'est pas une composante dans l'axe du chemin de club. Le spin est appliqué sur le plan du sol
+    SpinY = V0initms(4) * sin(gamaFacePath)* Sac.coeffSpinLift(Sac.Type == Club) ;//  SideSpin
+    SpinZ = V0initms(2) * sin(thetaLoft)   * Sac.coeffSpin(Sac.Type == Club);// BackSpin
     
     //% %%%%%%%%%%%%%%%%%%%%%%%%%
     // vecteur Spin
@@ -218,8 +222,10 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
     t=[];
     X = []; 
     YE = []; 
+    RD = [];
     for ii = 1:3 // je ne considère que 3 rebonds
-        [Pos, rd] = ode('root',Init0, T0, 0:0.1:Tfin, flightg, 1, events); 
+        [Pos, rd] = ode('roots',Init0, T0, 0:0.1:Tfin, flightg, 1, events); 
+        RD = [RD;rd];
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // resolution de l'angle  des rebonds. ///
          
@@ -277,7 +283,8 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
     Init0 = Pos(:,$); 
     T0 = 0; 
     T=[]; 
-    [Pos, rd] = ode('root',Init0, T0, 0:0.1:Tfin, rolling, 1, events2); // Nouveau calcul de modelisation du roulage sur green
+    [Pos, rd] = ode('roots',Init0, T0, 0:0.1:Tfin, rolling, 1, events2); // Nouveau calcul de modelisation du roulage sur green
+    RD = [RD;rd];
     YE = [YE ,Pos];
     t = [t,rd(1)];
     X = YE';
@@ -336,7 +343,7 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
         
     //% %%%%%%%%%%%%%%%%%%%%%%%%%
 //        subplot(10,1,10);  
-//        v = format();format(6);
+//        v = format();format(5);
 //        xstring(0,0,['alphaClub: '  + string(alphaClubPath*180/%pi) + '°' + ...
 //        ' | Face: ' + string(gamaFacePath*180/%pi) + '°' + ...
 //        ' | Club: ' + Club + ...
@@ -436,16 +443,18 @@ function [t,VOL,Res] = Golfball(Tfin, V0Club, Club, alphaClubPath,gamaFacePath,S
         a.alignment = "center"; a.font_size = 2; 
         format(v(2)); 
         subplot(10,10,90);
-        xstring(0,0,['Temps' ;  string(sum(t)) + ' s' ]);//,' Temps:', string(sum(t))]
+        xstring(0,0,['Temps' ; string(t(1)) + ' ' + string(sum(t(2:$))) + 's']);//,' Temps:', string(sum(t))]
         a=gce();
         a.alignment = "center"; a.font_size = 2; 
         format(v(2));
         drawnow();
     else
-        disp(['Club:',Club,' , VClub:', string(V0Club), 'km/h',' VBall:', string(V0Ballkmh),'km/h', 'ShafLeanImp: ',string(ShafLeanImp),',°, alphaClub: ', string(alphaClubPath*180/%pi),'° ,','Face:',string(gamaFacePath*180/%pi),'° ,',' backSpin:',string(SpinZ),'rpm,',' Lift:',string(SpinY),'rpm ,',' Pt Chute (m):', string([Xchute, Zchute]),', Dist (m):', string([XX($,1) , ZZ($,1)]),' Max Height:', string(Ymax),'m',' Vertical Launch:', string(LaunchAngledeg),' Vertical Land:', string(VerticalLand),' Temps:', string(sum(t))]);
+        v = format();format(6);
+        disp(['Club:',Club,' , VClub:', string(V0Club), 'km/h',' VBall:', string(V0Ballkmh),'km/h', 'ShafLeanImp: ',string(ShafLeanImp),',°, alphaClub: ', string(alphaClubPath*180/%pi),'° ,','Face:',string(gamaFacePath*180/%pi),'° ,',' backSpin:',string(SpinZ),'rpm,',' Lift:',string(SpinY),'rpm ,',' Pt Chute (m):', string([Xchute, Zchute]),', Dist (m):', string([XX($,1) , ZZ($,1)]),' Max Height:', string(Ymax),'m',' Vertical Launch:', string(LaunchAngledeg),' Vertical Land:', string(VerticalLand),' Temps:', string(t(1)) + 's ' + string(sum(t(2:$))) + 's ' + string(sum(t)) + 's']);
     end; // GraphOn
-        Res = [V0Club,V0Ballkmh, alphaClubPath*180/%pi,gamaFacePath*180/%pi,SpinZ,SpinY,Xchute, Zchute,XX($,1) , ZZ($,1),Ymax,LaunchAngledeg,VerticalLand,sum(t)];
-    
+    format(v(2));
+    Res = [V0Club,V0Ballkmh, alphaClubPath*180/%pi,gamaFacePath*180/%pi,SpinZ,SpinY,Xchute, Zchute,XX($,1) , ZZ($,1),Ymax,LaunchAngledeg,VerticalLand,sum(t)];
+    format(10);
 endfunction
 
 //% %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -497,7 +506,7 @@ function vprime=flightg(t,v)
     // Fonction xprime
     // Constantes
     m = v(11);//0.04545; ;// en kg
-    T = 15 + 273.15; 
+    T = 20 + 273.15; 
     rho_air = 1.292*273.15/T;         // kg/m^3 air density
     diam = v(12);//0.043;                     // Diametre Balle
     A = %pi*(diam/2)^2;               // Section en m^2 %pi*r^2
@@ -532,7 +541,7 @@ function vprime=flightg(t,v)
     //M = 0.5 * rho_air * Cl * A / m; 
     //M = 0.5 * rho_air *  A * (diam/2)/ m; // issus "L'effet Magnus" par Gilbert Gastebois qui simplifie M = 0.5*%pi*R^3*rho* wxv
     //M = 0.5 * rho_air *  A * getCm(Vm,Wm,v(10)); // expérimentalement, j'ai BallSpin / BallSpeed correcte, mais le calcul du Cm ne correspond pas a la realiste.
-    M = 0.5 * rho_air *  A * (diam/2)* getCm(Vm,Wm,v(10)) * Vm; // expérimentalement, j'ai BallSpin / BallSpeed correcte, mais le calcul du Cm ne correspond pas a la realiste.
+    M = 0.5 * rho_air *  A * (diam/2)* getCm(Vm,Wm,v(10)) * Vm; // expérimentalement, j'ai BallSpin / BallSpeed correcte, mais le calcul du Cm ne correspond pas a la realiste!!!.
     W_I = v(7);             // z spin rad/s
     W_J = v(8);             // x spin rad/s
     W_K = v(9);             // y spin (BackSpin) rad/s
@@ -657,25 +666,29 @@ function [V0Clubkmh,dynamicLoft_deg, SpinZ] = BallGolf(V0Ballkmh,Psi,miss,e,m,M)
     // V0Ballms^2/ (1 - 0.3556*miss) = V0Clubms^2 * (cos(thetaLoft)*(1+e)/(1+m/M))^2 + V0Clubms^2*(-sin(thetaLoft)/(1+m/M + 5/2))^2;
     // V0Ballms^2/ (1 - 0.3556*miss) = V0Clubms^2 * ((cos(thetaLoft)*(1+e)/(1+m/M))^2 + (-sin(thetaLoft)/(1+m/M + 5/2))^2);
     // V0Ballms^2/ ((1 - 0.3556*miss)*((cos(thetaLoft)*(1+e)/(1+m/M))^2 + (-sin(thetaLoft)/(1+m/M + 5/2))^2)) = V0Clubms^2;
-    V0Clubms = sqrt(V0Ballms^2 / ((1 - 0.3556*miss)*((cos(dynamicLoft_rd)*(1+e)/(1+m/M))^2 + (-sin(dynamicLoft_rd)/(1+m/M + 5/2))^2)));
+    V0Clubms = sqrt(abs(V0Ballms^2 / ((1 - 0.3556*miss)*((cos(dynamicLoft_rd)*(1+e)/(1+m/M))^2 + (-sin(dynamicLoft_rd)/(1+m/M + 5/2))^2))));
     dynamicLoft_deg = dynamicLoft_rd*180/%pi; // Passage en degre, plus facile a lire ;-)
     V0Clubkmh= V0Clubms * 3600/1000
 endfunction
 
 
-function [thetaLoft, ShafLeanImp, launchAngle, SpinZ] = LaunchAngle(v0Ballkmh, v0Clubkmh, TypeClub)
+function [thetaLoft, ShafLeanImp, launchAngle, SpinZ, gamaFacePath] = LaunchAngle(v0Ballkmh, v0Clubkmh, TypeClub, SpinLR)
     Sac = GetSac();
     m               = 0.04545; // Mass de la balle en kg
 
     v0Ballms = v0Ballkmh/3.6;
     V0Clubms = v0Clubkmh/3.6;
+    
+    SmashFactor = v0Ballms / V0Clubms;
 
     gamaFacePath = 0;
     miss = 0; 
-    Km = (1 - 0.3556*miss);
+    //    Ke = (1 + e)/(1+m/M);
+    //    Kp = 1/(1+m/M + 5/2);    
+    Km = (1 - 0.3556*miss);//(1 - 0.3556*miss)
     
-    Ke = (1 + Sac.ecoeff(Sac.Type == '7'))/(1+m/Sac.Poids(Sac.Type == '7'));
-    Kp = 1/(1+m/Sac.Poids(Sac.Type == '7') + 5/2);
+    Ke = (1 + Sac.ecoeff(Sac.Type == TypeClub))/(1+m/Sac.Poids(Sac.Type == TypeClub));// e et M
+    Kp = 1/(1+m/Sac.Poids(Sac.Type == TypeClub) + 5/2); // M
 
 //    V0Ballms                =  sqrt(V0Ballbfnms^2 + V0Ballbfpms^2)* (1 - 0.3556*miss); // On admet qu'il n'y a pas de coup raté ==> miss = 0
 //    V0Ballms^2*Km^-2        =  V0Clubms^2 * cos(thetaLoft)^2      * Ke^2          + (-V0Clubms)^2 * sin(thetaLoft)^2 * Kp^2;
@@ -683,15 +696,17 @@ function [thetaLoft, ShafLeanImp, launchAngle, SpinZ] = LaunchAngle(v0Ballkmh, v
 //    V0Ballms^2*Km^-2        =  V0Clubms^2*Ke^2 - V0Clubms^2*sin(thetaLoft)^2*Ke^2 + (-V0Clubms)^2*sin(thetaLoft)^2* Kp^2;
 //    V0Ballms^2*Km^-2        =  V0Clubms^2*(Ke^2 - sin(thetaLoft)^2*Ke^2 + sin(thetaLoft)^2* (-Kp)^2);
 //    (V0Ballms/(V0Clubms*Km))^2 - Ke^2 = sin(thetaLoft)^2*(-Ke^2 + (-Kp)^2);
-//    ((V0Ballms/(V0Clubms*Km))^2 - Ke^2)/(-Ke^2 + (-Kp)^2) = sin(thetaLoft)^2;
-    thetaLoft = asin(sqrt(((v0Ballms/(V0Clubms*Km))^2 - Ke^2)/(-Ke^2 + (-Kp)^2)));
+//    ((v0Ballms/(V0Clubms*Km))^2 - Ke^2)/(-Ke^2 + (-Kp)^2) = sin(thetaLoft)^2;
+    thetaLoft = asin(sqrt(abs( (SmashFactor^2-Ke^2) / (Kp^2-Ke^2)) ));
+    
     V0Ballbfnms     =  V0Clubms * cos(thetaLoft) * Ke ;     // Vitesse longitudinale dans le referentiel de decollage après impact (ref: The physics of golf: The optimum loft of a driverA. Raymond Penner)
     V0Ballbfpms     = -V0Clubms * sin(thetaLoft) * Kp;     // Vitesse perpendiculaire dans le referentiel de decollage après impact
-    launchAngle     = (thetaLoft + atan(V0Ballbfpms/V0Ballbfnms));  
+    launchAngle     = (thetaLoft + atan((V0Ballbfpms/V0Ballbfnms)));  
     //SpinX = 0;//-V0Ballms*cos(LaunchAngle)*sin(0) * Sac.coeffSpinLift(Type == Club) * sin(gamaFacePath);// Le SPIN sur l'axe X n'est pas une composante dans l'axe du chemin de club. Le spin est appliqué sur le plan du sol
     //SpinY = V0Ballms*sin(launchAngle) * sin(gamaFacePath)* Sac.coeffSpinLift(Type == Club) ;// 
     SpinZ = v0Ballms * cos(launchAngle)*cos(0) * sin(thetaLoft) * Sac.coeffSpin(Sac.Type == TypeClub);// 
     thetaLoft   = thetaLoft *180/%pi;
     launchAngle = launchAngle*180/%pi;
     ShafLeanImp = thetaLoft - Sac.Loft(Sac.Type == TypeClub); // et transformation en radian
+    gamaFacePath = asin(SpinLR / (v0Ballms * sin(launchAngle) * Sac.coeffSpinLift(Sac.Type == Club)))*180/%pi;
 endfunction
