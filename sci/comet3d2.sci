@@ -158,12 +158,13 @@ function comet3d2(varargin)
 
     function anim()
         //animation loop
+        axes=gca();
         k = round(p*n);
         step=ceil(n/200); //used to speed up the drawing
         for i=1:n
             for l=1:m
-                head(l).data=[x(i,l),y(i,l),z(i,l)];    
-                sleep(40); // Ajout MPH opur contrôler le temps de vole de la bal
+                head(l).data=[x(i,l),y(i,l),z(i,l)];
+                sleep(35);// Ajout MPH pour contrôler le temps de vol de la balle
                 if i<=k then
                     body(l).data= [body(l).data;[x(i,l),y(i,l),z(i,l)]];
                 else
@@ -172,11 +173,13 @@ function comet3d2(varargin)
                 end
             end
             if modulo(i,step)==0 then
-                fig.immediate_drawing = "on"
-                fig.immediate_drawing = "off"
+                //axes.data_bounds = [x(i,l)-10    -20    0 ; x(i,l)+250    20    y(i,l)+30];
+                //axes.data_bounds = [x(i,l)-10    -40    0 ; x(i,l)+250    40    z(i,l)+5];
+                fig.immediate_drawing = "on";
+                fig.immediate_drawing = "off";
             end
-        end
-        drawnow(),drawlater()
+        end;
+        drawnow();drawlater();
 
         for i=n:n+k
             for l=1:m
@@ -192,6 +195,6 @@ function comet3d2(varargin)
         drawnow();
     endfunction
     //not to generate an error message if the window is closed
-    exec(anim,"errcatch",-1);
-    //exec(anim,-1)
+    //exec(anim,-1,"errcatch");
+    exec(anim,-1)
 endfunction
