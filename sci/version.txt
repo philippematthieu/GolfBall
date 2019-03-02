@@ -1,6 +1,2 @@
 0.1
-<<<<<<< HEAD
 pour test4
-=======
-pour test3
->>>>>>> 0a6645afd99a2924e422563ddb0977088c6b3a66
