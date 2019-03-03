@@ -1191,6 +1191,9 @@ fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M52(:,1:$-1));
 plot(f5,sum(M52(1:$-1),'r'));
 
 
+
+
+
 ///////////////////////////////////////////////////////////////////////////
 
 M53=M51-M52;
@@ -1264,4 +1267,54 @@ wft = wft*32768;
 string(int(wft))+','
 
 [xs,ps,xf,pf]=wiener(y,x0,p0,f,g,h,q,r);
+
+
+//////////////////////////////////
+// decoupe
+tic();
+[wft,wfm,fr] = wfir('bp',256,[1500/Fs 4500/Fs ],'hm',[-1 -1]);
+xgf = filter(wft,1,xg);
+debutClub=find(xgf>0.2);
+finClub=0.02*Fs+debutClub(1);
+xgFenClub = xgf(debutClub(1):finClub);
+//[M52,tt5,f5]=animDensite(xgFenClub,44100, 256 ,32 , 0, -15,1);
+//fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M52(:,1:$-1));
+
+
+yfftClub = real(abs(fft(xgFenClub )));
+f1Club = Fs*(0:(size(xgFenClub,2))-1)/size(xgFenClub,2);
+ydensiteClub = abs(real(yfftClub.*conj(yfftClub)));
+//figure();plot(f1Club(1:$/2), ydensiteClub(1:$/2)/max(ydensite(1:$/2)),'r');
+[a,b]=max(ydensiteClub);
+FreqClub = f1Club(b);
+
+finBalle=0.03*Fs+finClub;
+[wft,wfm,fr] = wfir('bp',256,[FreqClub*1.2/Fs 4000/Fs ],'hm',[-1 -1]);
+xgFenBalle = filter(wft,1,xgf(finClub:finBalle));
+yfftBalle = real(abs(fft(xgFenBalle )));
+f1Balle = Fs*(0:(size(xgFenBalle,2))-1)/size(xgFenBalle,2);
+ydensiteBalle = abs(real(yfftBalle.*conj(yfftBalle)));
+//figure();plot(f1Balle(1:$/2), ydensiteBalle(1:$/2)/max(ydensiteBalle(1:$/2)),'r');
+[a,b]=max(ydensiteBalle);
+FreqBalle = f1Balle(b);
+
+yfftTotale = real(abs(fft(xgf )));
+f1Totale = Fs*(0:(size(xgf,2))-1)/size(xgf,2);
+ydensiteToale = abs(real(yfftTotale.*conj(yfftTotale)));
+//figure();plot(f1(1:$/2), ydensite(1:$/2)/max(ydensite(1:$/2)),'r');
+[a,b]=max(ydensiteToale);
+f1Totale(b);// vitesse de club
+toc()
+FreqClub/19.49
+FreqBalle/19.49
+
+
+
+
+
+
+
+
+
+
 

@@ -226,17 +226,17 @@ function [M1, tt, f] = animDensite(s2,Fs,nbEchantillon,pas,anim,seuil,normalize)
         s2_fft = (fftpadding(s2Centre(1,ii:ii + nbEchantillon)));
         a = find(dbv(real(s2_fft)) < seuil);
         s2_fft(a) = 0;
-//        if max(dbv(real(s2_fft))) < seuil then
-//            s2_densite = zeros(s2_fft);
-//        else
-            s2_densite = abs(real(s2_fft.*conj(s2_fft)));//abs(real(s2_fft.*conj(s2_fft)));
-            s2_densite = s2_densite .* s2_densite;
-            if (normalize == 0) then
-                s2_densite = s2_densite;
-            else
-                if (max(s2_densite) == 0) then  s2_densite = zeros(s2_densite); else s2_densite = s2_densite/max(s2_densite);end;
-            end;
-//        end;
+        //        if max(dbv(real(s2_fft))) < seuil then
+        //            s2_densite = zeros(s2_fft);
+        //        else
+        s2_densite = abs(real(s2_fft.*conj(s2_fft)));//abs(real(s2_fft.*conj(s2_fft)));
+        s2_densite = s2_densite .* s2_densite;
+        if (normalize == 0) then
+            s2_densite = s2_densite;
+        else
+            if (max(s2_densite) == 0) then  s2_densite = zeros(s2_densite); else s2_densite = s2_densite/max(s2_densite);end;
+        end;
+        //        end;
         tt = [tt;t(ii)];
         M1 = [M1;s2_densite];
         if (anim > 1) then 
@@ -379,41 +379,65 @@ function [vBall, vClub, SmashFactor, thetaLoft, ShafLeanImp, launchAngle, SpinZC
     //
     //  Recherche de la vitesse de la Balle
     //
-    [wft,wfm,fr] = wfir('bp',256,[1300/Fs 5000/Fs ],'hm',[-1 -1]); // passe bande
-    xf = filter(wft,1,u); // passe bande filtrage centre sur 1kHz 6kHz
-    [M5,tt5,f5]=animDensite(xf,44100, 256 ,32 , 0, -15,1);
-    M5Sqr = M5.^2;
-    [v,l]=max(sum(M5Sqr,'r')); // 2 version, a confirmer !!
-    FBall = max(f5(l));
-    vBall = FBall / 19.49;
-    [wft1,wfm,fr] = wfir('sb',255,[(FBall*.9)/Fs (FBall*1.1)/Fs ],'hm',[-1 -1]); // coupe bande autour de la balle 
+    //[wft,wfm,fr] = wfir('bp',256,[1300/Fs 5000/Fs ],'hm',[-1 -1]); // passe bande
+    //xf = filter(wft,1,u); // passe bande filtrage centre sur 1kHz 6kHz
+    //[M5,tt5,f5]=animDensite(xf,44100, 256 ,32 , 0, -15,1);
+    //M5Sqr = M5.^2;
+    //[v,l]=max(sum(M5Sqr,'r')); // 2 version, a confirmer !!
+    //FBall = max(f5(l));
+    //vBall = FBall / 19.49;
+    //[wft1,wfm,fr] = wfir('sb',255,[(FBall*.9)/Fs (FBall*1.1)/Fs ],'hm',[-1 -1]); // coupe bande autour de la balle 
 
     //
     // Recherche de la vitesse du Club
     //
-    [M5,tt5,f5]=animDensite(filter(wft,1,xf),44100, 256 ,32 , 0, -150,0);
-    [m,k] = max(sum(M5,'c')); tt5(k);// temps du shoot
-    [m,k] = max(sum(M5,'r')); 
-    FClub = f5(k);
+    //[M5,tt5,f5]=animDensite(filter(wft,1,xf),44100, 256 ,32 , 0, -150,0);
+    //[m,k] = max(sum(M5,'c')); tt5(k);// temps du shoot
+    //[m,k] = max(sum(M5,'r')); 
+    [wft,wfm,fr] = wfir('bp',256,[1500/Fs 4500/Fs ],'hm',[-1 -1]);
+    xgf = filter(wft,1,u);
+    debutClub=find(xgf>0.2);
+    finClub=0.02*Fs+debutClub(1);
+    xgFenClub = xgf(debutClub(1):finClub);
+    //[M52,tt5,f5]=animDensite(xgFenClub,44100, 256 ,32 , 0, -15,1);
+    //fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M52(:,1:$-1));
+
+
+    yfftClub = real(abs(fft(xgFenClub )));
+    f1Club = Fs*(0:(size(xgFenClub,2))-1)/size(xgFenClub,2);
+    ydensiteClub = abs(real(yfftClub.*conj(yfftClub)));
+    //figure();plot(f1Club(1:$/2), ydensiteClub(1:$/2)/max(ydensite(1:$/2)),'r');
+    [a,b]=max(ydensiteClub);
+    FClub = f1Club(b);
     vClub = FClub/19.49
     [wft2,wfm,fr] = wfir('sb',255,[(FClub*.9)/Fs (FClub*1.1)/Fs ],'hm',[-1 -1]); // coupe bande autour de la club 
     //
     //
+    finBalle=0.03*Fs+finClub;
+    [wft,wfm,fr] = wfir('bp',256,[FreqClub*1.2/Fs 4000/Fs ],'hm',[-1 -1]);
+    xgFenBalle = filter(wft,1,xgf(finClub:finBalle));
+    yfftBalle = real(abs(fft(xgFenBalle )));
+    f1Balle = Fs*(0:(size(xgFenBalle,2))-1)/size(xgFenBalle,2);
+    ydensiteBalle = abs(real(yfftBalle.*conj(yfftBalle)));
+    //figure();plot(f1Balle(1:$/2), ydensiteBalle(1:$/2)/max(ydensiteBalle(1:$/2)),'r');
+    [a,b]=max(ydensiteBalle);
+    FBall = f1Balle(b);
+    vBall = FBall/19.49;
     //
     [wft3,wfm,fr] = wfir('hp',255,[(FBall*1.1)/Fs (FBall*3)/Fs ],'hm',[-1 -1]); // Passe haut arpès de la balle 
-    [M5,tt5,f5]=animDensite(filter(wft3,1,xf),44100, 1024 ,128 , 0, -150,1);
+    [M5,tt5,f5]=animDensite(filter(wft3,1,xgf),44100, 1024 ,128 , 0, -150,1);
     //fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M5(:,1:$-1));
     //f=figure();plot(f5,sum(M5(1:$,1:$-1),'r'),'r'); // vitesse du shaft (1er pic), vitesse de la balle 2eme pic)
     [m,k] = max(sum(M5,'r')); 
     FreqSpinMax = f5(k);    
-    pause
+
     [wft4,wfm,fr] = wfir('lp',255,[(FBall*0.9)/Fs (FBall*3)/Fs ],'hm',[-1 -1]); // Passe bas avant de la balle 
-    [M5,tt5,f5]=animDensite(filter(wft4,1,xf),44100, 1024 ,128 , 0, -150,1);
+    [M5,tt5,f5]=animDensite(filter(wft4,1,xgf),44100, 1024 ,128 , 0, -150,1);
     [m,k] = max(sum(M5,'r')); 
     FreqSpinMin = f5(k);
     //FBall - FreqSpinMin;
     //FreqSpinMax - FBall;
-    SpinLR = Freq2RpmSpin( 2*FBall - FreqSpinMin -FreqSpinMax); // spin Left Rigth
+    SpinLR = 210;//Freq2RpmSpin( (FreqSpinMax-FBall)-(FBall - FreqSpinMin) ); // spin Left Rigth
     SpinZM = Freq2RpmSpin(( - FreqSpinMin + FreqSpinMax )/2);
     SmashFactor = vBall / vClub;
     [thetaLoft, ShafLeanImp, launchAngle, SpinZC, gamaFacePath] = LaunchAngle(vBall, vClub, Club, SpinLR);
@@ -845,7 +869,7 @@ function [VBall, VClub, Spin, SpinAxis, xresult]=GetSwing(x, Fs, FreqMin, FreqMa
     [s2_ffta, f1] = FftFiltree(x((ii+7)*nbEchantillon+1:nbEchantillon*(ii+8)),Fs,FreqMin,FreqMax, 0);
     [m4,k4] = max(s2_ffta,'c');VBall4 = Fs*((k4)-1);//vitesse probable de la balle, qui est la première détection de vitesse seuil f1 = Fs*((k)-1)/size(s2_fft,2)
     VBall = max([VBall1 VBall2 VBall3 VBall4])/size(s2_ffta,2)/19.49;
-    
+
     //[s2_fft, f1] = FftFiltree(x((ii+4)*nbEchantillon+1:nbEchantillon*(ii+8)),Fs,(VBall-0.5)*19.49 , (VBall+.5)*19.49, 0);
     //[s2_fftb, f1] = FftFiltree(x((ii+4)*nbEchantillon+1:nbEchantillon*(ii+8)),Fs,(VBall*19.49-RpmSpin2Freq(10000)) , (VBall*19.49-RpmSpin2Freq(2000)), 0);
     //[m k]=max(s2_fftb); MIN = (f1(k));
@@ -858,11 +882,11 @@ function [VBall, VClub, Spin, SpinAxis, xresult]=GetSwing(x, Fs, FreqMin, FreqMa
     [s2_fftb, f1] = FftFiltree(x((ii+7)*nbEchantillon+1:nbEchantillon*(ii+8)),Fs,(VBall*19.49-RpmSpin2Freq(10000)) , (VBall*19.49-RpmSpin2Freq(2000)), 0);
     [m4 k4]=max(s2_fftb); MIN4 = (f1(k4));
     MIN = min([MIN1 MIN2 MIN3 MIN4]);
-//    [wft,wfm,fr] = wfir('bp',64,[(VBall*19.49 - RpmSpin2Freq(10000))/Fs (VBall*19.49  - RpmSpin2Freq(2000))/Fs ],'re',[-1 -1]);
-//    s2_fftb = real(abs(fft(filter(wft,1,x((ii+4)*nbEchantillon+1:nbEchantillon*(ii+8))))));
-//    f1 = Fs*(0:(size(s2_fftb,2))-1)/size(s2_fftb,2);
-//    [m k]=max(s2_fftb); MIN = (f1(k));
-//    
+    //    [wft,wfm,fr] = wfir('bp',64,[(VBall*19.49 - RpmSpin2Freq(10000))/Fs (VBall*19.49  - RpmSpin2Freq(2000))/Fs ],'re',[-1 -1]);
+    //    s2_fftb = real(abs(fft(filter(wft,1,x((ii+4)*nbEchantillon+1:nbEchantillon*(ii+8))))));
+    //    f1 = Fs*(0:(size(s2_fftb,2))-1)/size(s2_fftb,2);
+    //    [m k]=max(s2_fftb); MIN = (f1(k));
+    //    
     //[s2_fftc, f1] = FftFiltree(x((ii+4)*nbEchantillon+1:nbEchantillon*(ii+8)),Fs,(VBall*19.49+RpmSpin2Freq(2000)) , (VBall*19.49+RpmSpin2Freq(10000)), 0);
     //[m k]=max(s2_fftc); MAX = (f1(k));
     [s2_fftc, f1] = FftFiltree(x((ii+4)*nbEchantillon+1:nbEchantillon*(ii+5)),Fs,(VBall*19.49+RpmSpin2Freq(2000)) , (VBall*19.49+RpmSpin2Freq(10000)), 0);
@@ -971,35 +995,35 @@ function[y] = pmdemod(x,Vc,Em,Ec,fc,fs)
 endfunction
 
 function [Rxx] = autocorrelation(x)
-//Autocorrelation of a given Input Sequence
-//Finding out the period of the signal using autocorrelation technique
+    //Autocorrelation of a given Input Sequence
+    //Finding out the period of the signal using autocorrelation technique
 
-L = length(x);
-h = zeros(1,L);
-for i = 1:L
-  h(L-i+1) = x(i);
-end
-N = 2*L-1;
-Rxx = zeros(1,N);
-for i = L+1:N
-   h(i) = 0;
-end
-for i = L+1:N
-    x(i) = 0;
-end
-for n = 1:N
-  for k = 1:N
-    if(n >= k)
-      Rxx(n) = Rxx(n)+x(n-k+1)*h(k);
+    L = length(x);
+    h = zeros(1,L);
+    for i = 1:L
+        h(L-i+1) = x(i);
     end
-  end
-end
-disp('Auto Correlation Result is')
-Rxx
-disp('Center Value is the Maximum of autocorrelation result')
-[m,n] = max(Rxx)
-disp('Period of the given signal using Auto Correlation Sequence')
-n
+    N = 2*L-1;
+    Rxx = zeros(1,N);
+    for i = L+1:N
+        h(i) = 0;
+    end
+    for i = L+1:N
+        x(i) = 0;
+    end
+    for n = 1:N
+        for k = 1:N
+            if(n >= k)
+                Rxx(n) = Rxx(n)+x(n-k+1)*h(k);
+            end
+        end
+    end
+    disp('Auto Correlation Result is')
+    Rxx
+    disp('Center Value is the Maximum of autocorrelation result')
+    [m,n] = max(Rxx)
+    disp('Period of the given signal using Auto Correlation Sequence')
+    n
 endfunction
 
 function[y]=ampdemod(x,Vc,fc,fs)
@@ -1017,8 +1041,8 @@ function[y]=ampdemod(x,Vc,fc,fs)
     num = num(length(num):-1:1);
     den = den(length(den):-1:1);
     y = filter(num,den,xdem);
-//    y = y/Em;
-//    y = y-Ec;
-//    plot(y,'r');
-//    title('AM Demodulated Signal')
+    //    y = y/Em;
+    //    y = y-Ec;
+    //    plot(y,'r');
+    //    title('AM Demodulated Signal')
 endfunction 
