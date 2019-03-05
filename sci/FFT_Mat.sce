@@ -375,25 +375,19 @@ function [vClub, vBall, SmashFactor,thetaLoft, ShafLeanImp, launchAngle, SpinZ] 
     //disp(SmashFactor,vClub, vBall);
 endfunction
 
+function [debutClub, finClub, finBalle] = split(u)
+    Fs = 44100; 
+    [wft,wfm,fr] = wfir('bp',256,[1500/Fs 4500/Fs ],'hm',[-1 -1]);
+    xgf = filter(wft,1,u);
+    debutClub=find(xgf>0.2);
+    debutClub = debutClub(1);
+    finClub=0.02*Fs+debutClub(1);
+    finBalle=0.03*Fs+finClub;
+endfunction
+
 function [vBall, vClub, SmashFactor, thetaLoft, ShafLeanImp, launchAngle, SpinZC, SpinZM, SpinLR, gamaFacePath]=Info2(u, Club)
     //
-    //  Recherche de la vitesse de la Balle
-    //
-    //[wft,wfm,fr] = wfir('bp',256,[1300/Fs 5000/Fs ],'hm',[-1 -1]); // passe bande
-    //xf = filter(wft,1,u); // passe bande filtrage centre sur 1kHz 6kHz
-    //[M5,tt5,f5]=animDensite(xf,44100, 256 ,32 , 0, -15,1);
-    //M5Sqr = M5.^2;
-    //[v,l]=max(sum(M5Sqr,'r')); // 2 version, a confirmer !!
-    //FBall = max(f5(l));
-    //vBall = FBall / 19.49;
-    //[wft1,wfm,fr] = wfir('sb',255,[(FBall*.9)/Fs (FBall*1.1)/Fs ],'hm',[-1 -1]); // coupe bande autour de la balle 
-
-    //
-    // Recherche de la vitesse du Club
-    //
-    //[M5,tt5,f5]=animDensite(filter(wft,1,xf),44100, 256 ,32 , 0, -150,0);
-    //[m,k] = max(sum(M5,'c')); tt5(k);// temps du shoot
-    //[m,k] = max(sum(M5,'r')); 
+    Fs = 44100; 
     [wft,wfm,fr] = wfir('bp',256,[1500/Fs 4500/Fs ],'hm',[-1 -1]);
     xgf = filter(wft,1,u);
     debutClub=find(xgf>0.2);
@@ -401,7 +395,6 @@ function [vBall, vClub, SmashFactor, thetaLoft, ShafLeanImp, launchAngle, SpinZC
     xgFenClub = xgf(debutClub(1):finClub);
     //[M52,tt5,f5]=animDensite(xgFenClub,44100, 256 ,32 , 0, -15,1);
     //fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M52(:,1:$-1));
-
 
     yfftClub = real(abs(fft(xgFenClub )));
     f1Club = Fs*(0:(size(xgFenClub,2))-1)/size(xgFenClub,2);
@@ -411,7 +404,6 @@ function [vBall, vClub, SmashFactor, thetaLoft, ShafLeanImp, launchAngle, SpinZC
     FClub = f1Club(b);
     vClub = FClub/19.49
     [wft2,wfm,fr] = wfir('sb',255,[(FClub*.9)/Fs (FClub*1.1)/Fs ],'hm',[-1 -1]); // coupe bande autour de la club 
-    //
     //
     finBalle=0.03*Fs+finClub;
     [wft,wfm,fr] = wfir('bp',256,[FreqClub*1.2/Fs 4000/Fs ],'hm',[-1 -1]);
