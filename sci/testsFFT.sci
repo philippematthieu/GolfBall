@@ -1154,8 +1154,8 @@ plot3d(1:69,1:64,abs(w(1:69,1:64)));
 
 // 2019-02-24-F7-123m-150kmh-5274trm-210trm-cs111
 
-[wft,wfm,fr] = wfir('bp',256,[1300/Fs 4000/Fs ],'hm',[-1 -1]);
-[wft1,wfm,fr] = wfir('sb',255,[2900/Fs 3000/Fs ],'hm',[-1 -1]);
+[wft,wfm,fr] = wfir('bp',256,[1300/Fs 4000/Fs ],'rec',[-1 -1]);
+[wft1,wfm,fr] = wfir('sb',255,[2900/Fs 3000/Fs ],'rec',[-1 -1]);
 plot((diff(unwrap(angle(hilbert(filter(wft,1,filter(wft1,1,xg))))))/(2*%pi*1/Fs)));
 plot((diff(unwrap(angle(hilbert(filter(wft,1,xg)))))/(2*%pi*1/Fs)));
 
@@ -1167,10 +1167,18 @@ xd1 = xd($/4:$/1.5);xg1 = xg($/4:$/1.5);
 dt = 1/Fs;
 fc = 2930; // carrier porteuse = vitesse de la balle
 df = 50; // modulation excursion
-fm = 2000; // modulation
+fm = 800; // modulation//Freq2RpmSpin(833) = 5273.0706 tr/min rpm = 552 rad/s =  1 rad/sec? The answer is 9.54929659643 RPM
+vb=150; // 150 kmh
 
+r = 0.043/2;
+c = 299792458 ;
+lambda = c /10.525E9;
 tAx = dt:dt:0.1; // time axis in seconds
 u = sin(2*%pi*fc*tAx + (df/fm)*cos(2*%pi*fm*tAx));
+sa = exp(-%i*2*%pi*fc*tAx);
+smod = exp(-%i*2*r*sin(2*%pi*fm*tAx)/lambda);
+u = real(sa.*smod);
+plot(tAx,u);
 u = filter(wft,1,xg);
 u = filter(wft,1,filter(wft1,1,xg));
 w = unwrap(angle(hilbert(u)));
@@ -1178,7 +1186,7 @@ v = (diff(w)/(2*%pi*dt)); // instantaneous phase differential
 subplot(2,1,1);
 plot(u)
 subplot(2,1,2);
-plot(v)
+plot(abs(v))
 mean(v(50:$-50))
 min(v(50:$-50))
 max(v(50:$-50))
@@ -1188,9 +1196,13 @@ y = demod(u,fc,Fs,'fm');plot(y);//plot(u)
 [M52,tt5,f5]=animDensite(u,44100, 256 ,32 , 1, -15,1);
 fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M52(:,1:$-1));
 
-plot(f5,sum(M52(1:$-1),'r'));
+plot(f5,sum(M52(:,1:$-1),'r'));
 
 
+
+for i = 1:size(M52,'r')
+    plot(f5,sum(M52(i,1:$-1),'r'),1);
+end
 
 
 
