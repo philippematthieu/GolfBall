@@ -11,10 +11,10 @@
 //// Date of creation: 10 oct. 2016
 //// Anntenne SMA
 
-//chdir('C:\Users\phili\Golf\portaudio_0.2\');
-//exec('C:\Users\phili\Golf\portaudio_0.2\loader.sce',-1)
-chdir('C:\Users\phili\Golf\Radar');
-//stacksize('max');
+chdir('C:\Users\matthieu\portaudio_0.2');
+exec('C:\Users\matthieu\portaudio_0.2\loader.sce',-1)
+chdir('C:\Users\matthieu\Documents\GolfBall\sci');
+stacksize('max');
 
 /////////////////////////////////////////////////////////////////
 
@@ -198,7 +198,7 @@ function [M1, tt, f] = animDensite(s2,Fs,nbEchantillon,pas,anim,seuil,normalize)
     b=modulo(N,nbEchantillon);
     s2Centre=[s2Centre, zeros(nbEchantillon - b,1)'];//     s2Centre=[s2Centre, zeros(2*(nbEchantillon - b),1)'];
 
-
+    
     if (anim > 0) then 
         figure();
         subplot(2,1,1);
@@ -224,13 +224,19 @@ function [M1, tt, f] = animDensite(s2,Fs,nbEchantillon,pas,anim,seuil,normalize)
         end;
         //densite spectrale 
         s2_fft = (fftpadding(s2Centre(1,ii:ii + nbEchantillon)));
-        a = find(dbv(real(s2_fft)) < seuil);
-        s2_fft(a) = 0;
+            if (size(seuil,'c')==1) then  
+                a = find(dbv(real(s2_fft)) < seuil);
+                b=[];
+            else 
+                a = find(dbv(real(s2_fft)) < seuil(1));
+                b = find(dbv(real(s2_fft)) > seuil(2));
+            end;
+        s2_fft([a,b]) = 0;
         //        if max(dbv(real(s2_fft))) < seuil then
         //            s2_densite = zeros(s2_fft);
         //        else
         s2_densite = abs(real(s2_fft.*conj(s2_fft)));//abs(real(s2_fft.*conj(s2_fft)));
-        s2_densite = s2_densite .* s2_densite;
+        //s2_densite = s2_densite .* s2_densite;
         if (normalize == 0) then
             s2_densite = s2_densite;
         else
@@ -375,66 +381,88 @@ function [vClub, vBall, SmashFactor,thetaLoft, ShafLeanImp, launchAngle, SpinZ] 
     //disp(SmashFactor,vClub, vBall);
 endfunction
 
-function [debutClub, finClub, finBalle] = split(u)
+function [debutClub, finClub, debutBalle, finBalle] = split(u)
     Fs = 44100; 
     [wft,wfm,fr] = wfir('bp',256,[1500/Fs 4500/Fs ],'hm',[-1 -1]);
     xgf = filter(wft,1,u);
     debutClub=find(xgf>0.2);
     debutClub = debutClub(1);
     finClub=0.02*Fs+debutClub(1);
-    finBalle=0.03*Fs+finClub;
+    debutBalle=0.03*Fs+finClub;
+    finBalle = size(u,2);
 endfunction
 
-function [vBall, vClub, SmashFactor, thetaLoft, ShafLeanImp, launchAngle, SpinZC, SpinZM, SpinLR, gamaFacePath]=Info2(u, Club)
+function [vBall, vBallCorrigee, vClub, SmashFactor, thetaLoft, ShafLeanImp, launchAngle, SpinZC, SpinZM, SpinLR, gamaFacePath, PointShoot]=Info2(u, Club)
     //
-    Fs = 44100; 
-    [wft,wfm,fr] = wfir('bp',256,[1500/Fs 4500/Fs ],'hm',[-1 -1]);
-    xgf = filter(wft,1,u);
-    debutClub=find(xgf>0.2);
-    finClub=0.02*Fs+debutClub(1);
-    xgFenClub = xgf(debutClub(1):finClub);
-    //[M52,tt5,f5]=animDensite(xgFenClub,44100, 256 ,32 , 0, -15,1);
-    //fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M52(:,1:$-1));
-
-    yfftClub = real(abs(fft(xgFenClub )));
-    f1Club = Fs*(0:(size(xgFenClub,2))-1)/size(xgFenClub,2);
-    ydensiteClub = abs(real(yfftClub.*conj(yfftClub)));
-    //figure();plot(f1Club(1:$/2), ydensiteClub(1:$/2)/max(ydensite(1:$/2)),'r');
-    [a,b]=max(ydensiteClub);
-    FClub = f1Club(b);
-    vClub = FClub/19.49
-    [wft2,wfm,fr] = wfir('sb',255,[(FClub*.9)/Fs (FClub*1.1)/Fs ],'hm',[-1 -1]); // coupe bande autour de la club 
+    //  Recherche de la vitesse de la Balle
     //
-    finBalle=0.03*Fs+finClub;
-    [wft,wfm,fr] = wfir('bp',256,[FreqClub*1.2/Fs 4000/Fs ],'hm',[-1 -1]);
-    xgFenBalle = filter(wft,1,xgf(finClub:finBalle));
-    yfftBalle = real(abs(fft(xgFenBalle )));
-    f1Balle = Fs*(0:(size(xgFenBalle,2))-1)/size(xgFenBalle,2);
-    ydensiteBalle = abs(real(yfftBalle.*conj(yfftBalle)));
-    //figure();plot(f1Balle(1:$/2), ydensiteBalle(1:$/2)/max(ydensiteBalle(1:$/2)),'r');
-    [a,b]=max(ydensiteBalle);
-    FBall = f1Balle(b);
-    vBall = FBall/19.49;
-    //
-    [wft3,wfm,fr] = wfir('hp',255,[(FBall*1.1)/Fs (FBall*3)/Fs ],'hm',[-1 -1]); // Passe haut arpès de la balle 
-    [M5,tt5,f5]=animDensite(filter(wft3,1,xgf),44100, 1024 ,128 , 0, -150,1);
+    [wft,wfm,fr] = wfir('bp',256,[1000/Fs 6000/Fs ],'re',[-1 -1]); // passe bande
+    xf = filter(wft,1,u); // passe bande filtrage centre sur 1kHz 6kHz
+    [M5,tt5,f5]=animDensite(xf,44100, 256 ,32 , 0, -15,1);//xtitle("Freq complet");
     //fig = figure();fig.color_map = jetcolormap(64);Sgrayplot(tt5,f5,M5(:,1:$-1));
-    //f=figure();plot(f5,sum(M5(1:$,1:$-1),'r'),'r'); // vitesse du shaft (1er pic), vitesse de la balle 2eme pic)
+    M5Sqr = M5.^2;
+    [v,l]=max(sum(M5Sqr,'r')); // 2 version, a confirmer !
+    FBall = max(f5(l));
+    vBall = FBall / 19.49;
+    [wftsb,wfm,fr] = wfir('sb',255,[(FBall*.88)/Fs (FBall*1.12)/Fs ],'re',[-1 -1]); // coupe bande autour de la balle 
+    
+    // JAUNE Tout le SIGNAL band pass sur 1000 à 6000
+    [M5,tt5,f5]=animDensite(xf,44100, 256*2 ,32*2 , 0, -15,1);//xtitle("Freq complet");
     [m,k] = max(sum(M5,'r')); 
-    FreqSpinMax = f5(k);    
-
-    [wft4,wfm,fr] = wfir('lp',255,[(FBall*0.9)/Fs (FBall*3)/Fs ],'hm',[-1 -1]); // Passe bas avant de la balle 
-    [M5,tt5,f5]=animDensite(filter(wft4,1,xgf),44100, 1024 ,128 , 0, -150,1);
+    f=figure();plot(f5,sum(M5(1:$,1:$-1)/m,'r'),'y');     //
+    // Recherche de la vitesse du Club
+    //
+    Fenetre = 32;dt=1500;
+    [wft2,wfm,fr] = wfir('bp',256,[(FBall/1.5)/Fs (FBall/1)/Fs ],'re',[-1 -1]); // coupe bande autour de la club 
+    [M5,tt5,f5]=animDensite(filter(wft2,1,xf),44100, 256 ,Fenetre , 0, -150,0); // NON NORMALISE !!
+    [m1,k1] = max(sum(M5,'c')); PointShoot = tt5(k1)*Fs;// temps du shoot
+    [m,k] = max(sum(M5,'r')); 
+    FClub = f5(k);
+    vClub = FClub/19.49;
+    
+    // BLEUE BandPass du début au shoot Club. Vitesse du Club
+    [M5,tt5,f5]=animDensite(filter(wft2 ,1,xf(1:PointShoot+300)),44100, 256 ,Fenetre , 0, -150,0); //xtitle("Freq around Smash Club");
+    [m,k] = max(sum(M5,'r')); 
+    scf(f);plot(f5,sum(M5(1:$,1:$-1),'r')/m,'b'); // vitesse du shaft (1er pic), vitesse de la balle 2eme pic)    //
+    FClub = f5(k);
+    vClub = FClub/19.49;
+    
+    // ROUGE Hipass coupé de FreqBall
+    [wft3 ,wfm,fr] = wfir('bp',255,[(FBall)/Fs (FBall+1500)/Fs ],'hm',[-1 -1]); // Passe haut arpès de la balle 
+    [M5,tt5,f5]=animDensite(filter(wft3 ,1,filter(wftsb ,1,xf(PointShoot+dt:$*3/4))),44100, 256*16 ,32*16 , 0, -5,1);
+    [m,k] = max(sum(M5,'r')); 
+    scf(f);plot(f5,sum(M5(1:$,1:$-1)/m,'r'),'r'); // vitesse du shaft (1er pic), vitesse de la balle 2eme pic)
+    FreqSpinMax = f5(k);
+    
+    // VERT CoupeBand de FreqBall
+    [M5,tt5,f5]=animDensite(filter(wftsb ,1,xf(PointShoot+dt:$*3/4)),44100, 256*16 ,32*16 , 0, -55,0);//coupe bande");
+    [m,k] = max(sum(M5,'r')); 
+    scf(f);plot(f5,sum(M5(1:$,1:$-1)/m,'r'),'g'); // Passe bas avant de la balle 
+    
+    // MAGENTA Pass Bas coupée de FreqBall
+    [wft4,wfm,fr] = wfir('bp',256,[(FBall-1400)/Fs (FBall)/Fs ],'hm',[-1 -1]); 
+    [M5,tt5,f5]=animDensite(filter(wft4,1,filter(wftsb ,1,xf(PointShoot+dt:$*3/4))),44100, 256*16 ,32*16 , 0, -5,1);
     [m,k] = max(sum(M5,'r')); 
     FreqSpinMin = f5(k);
-    //FBall - FreqSpinMin;
-    //FreqSpinMax - FBall;
-    SpinLR = 210;//Freq2RpmSpin( (FreqSpinMax-FBall)-(FBall - FreqSpinMin) ); // spin Left Rigth
-    SpinZM = Freq2RpmSpin(( - FreqSpinMin + FreqSpinMax )/2);
+    scf(f);plot(f5,sum(M5(1:$,1:$-1),'r')/m,'m');
+    
+    // affichage de la legende
+    hl=legend(['vBall: '+string(vBall)+' smashfactor '+ string(vBall / vClub);'vClub: '+string(vClub);'HPspin: '+string(Freq2RpmSpin(FreqSpinMax - FBall)*2)+' rpm';'Coupe Bande: '+string(FreqSpinMax-FBall);'LP: '+string(Freq2RpmSpin(FBall-FreqSpinMin)*2)+' rpm']);
+    
+    SpinLR = 0;//Freq2RpmSpin( [(FreqSpinMin - FBall) , (FreqSpinMax - FBall)]); // spin Left Rigth
+    SpinZM = [Freq2RpmSpin(FBall - FreqSpinMin)*2, Freq2RpmSpin(-FBall + FreqSpinMax)*2;];
     SmashFactor = vBall / vClub;
     [thetaLoft, ShafLeanImp, launchAngle, SpinZC, gamaFacePath] = LaunchAngle(vBall, vClub, Club, SpinLR);
+    vBallCorrigee = vBall/cos(launchAngle*%pi/180);    
     //disp(SmashFactor,vClub, vBall);
+    [M51,tt5,f5]=animDensite(filter(wft ,1,xf(PointShoot:$)),44100, 256 ,32 , 1, -5,1);
+    [M51,tt5,f5]=animDensite(filter(wft ,1,xf(PointShoot:$)),44100, 256 * 8,32 * 8 , 1, -5,1);
+    [M51,tt5,f5]=animDensite(filter(wft3 ,1,xf(PointShoot:$)),44100, 256 ,32 , 1, -5,1);
+    [c,d]=find((M51==1));
+    [c,d]=find((M51>.5));
+    figure();plot(tt5(c),f5(d),'rx');pause
 endfunction
+
 
 
 
@@ -577,6 +605,7 @@ function Y=savitzkygolayM(X,p,nL,nR)
     end
     [row,col]=size(X)
     n=row*col
+
     X=[X(1)*ones(nL,1);matrix(X,n,1);X(n)*ones(nR,1)]
     n=n+nL+nR
     C=pinv(cumprod([ones(n1,1),(-nL:nR)'*ones(1,p)],"c"))
@@ -744,29 +773,31 @@ endfunction
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-function [s1, s2_fft] = HighSpeed()
+function [s1, s2_fft] = HighSpeed(sensibilite)
     figure();plot(1);ax = gca();ax.auto_clear = 'on';
     Fs = 44100;
-    N = 512;//Fs*0.01;
+    N = 44100;//Fs*0.01;
     f = Fs*(0:(N)-1)/N;
     [wft,wfm,fr] = wfir('bp',64,[0.04 0.09],'hm',[-1 -1]);
     //[s2f zf] = filter(wft,1,s2); // filtrage du signal par le filtre passe bande
 
     while %T
         //y = pa_recordwav(N,Fs ,1);
-        s2_fft = abs(real(fft(filter(wft,1,pa_recordwav(N,Fs ,1)'))));
+        s2_fft = abs(real(fft(filter(wft,1,pa_recordwav(128,Fs ,1)'))));
         //plot(f(2:$/2),s2_fft(2:$/2));
         //s2_densite_real = abs(real(s2_fft.*conj(s2_fft)));
         //plot(f(2:$/16),s2_densite_real(2:$/16));
         //[m,k]=max(s2_densite_real);
         //m
         //f(k)/19.49
-        if (max(s2_fft,'c') > 3) then,
+        disp(max(s2_fft,'c'));
+        if (max(s2_fft,'c') > sensibilite) then,
             break;
         end;
     end
-    s1 = pa_recordwav(N1*1500,Fs ,1)';
-    plot(s1);
+    s1 = pa_recordwav(N,Fs ,2)';
+    [M52,tt5,f5]=animDensite(filter(wft,1,s1(2,:)),44100, 256 ,32 , 1, -10,1);
+    [M52,tt5,f5]=animDensite(s1(2,:),44100, 256 ,32 , 1, -10,1);
 endfunction
 
 
@@ -1038,3 +1069,6 @@ function[y]=ampdemod(x,Vc,fc,fs)
     //    plot(y,'r');
     //    title('AM Demodulated Signal')
 endfunction 
+
+
+
