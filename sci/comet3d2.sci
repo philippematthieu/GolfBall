@@ -8,6 +8,7 @@
 // are also available at;
 // http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
 
+
 function comet3d2(varargin)
     //Comet-like trajectory.
     //   comet(y) displays an animated comet plot of the vector y.
@@ -164,7 +165,7 @@ function comet3d2(varargin)
         for i=1:n
             for l=1:m
                 head(l).data=[x(i,l),y(i,l),z(i,l)];
-                sleep(35);// Ajout MPH pour contrôler le temps de vol de la balle
+                sleep(35);// Ajout MPH pour contrôler le temps de vol de la balle //////////////////////////////////////////////
                 if i<=k then
                     body(l).data= [body(l).data;[x(i,l),y(i,l),z(i,l)]];
                 else
@@ -195,6 +196,6 @@ function comet3d2(varargin)
         drawnow();
     endfunction
     //not to generate an error message if the window is closed
-    //exec(anim,-1,"errcatch");
-    exec(anim,-1)
+    exec(anim,"errcatch",-1);
+    //exec(anim,-1)
 endfunction
